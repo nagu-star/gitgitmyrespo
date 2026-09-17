@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Temporary / Inspection scripts
+inspect_*.py
+deobfuscate_*.py
+extract_endpoints.py
+find_*.py
+test_*.py
+probe_*.py
+dashboard_page.html
+*.js
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

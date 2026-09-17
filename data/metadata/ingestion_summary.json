@@ -1,0 +1,29 @@
+{
+  "total_records": 1460,
+  "total_states": 36,
+  "total_mps": 775,
+  "official_data_source": "https://mplads.mospi.gov.in/digigov/dashboard.html",
+  "extraction_timestamp": "2026-09-17 22:01:21",
+  "available_fields": [
+    "WORK_ID",
+    "STATE_ID",
+    "STATE_NAME",
+    "DISTRICT_NAME",
+    "CONSTITUENCY",
+    "MP_NAME",
+    "TENURE",
+    "WORK_CATEGORY",
+    "WORK_DESCRIPTION",
+    "ESTIMATED_COST",
+    "SANCTION_AMOUNT",
+    "EXPENDITURE_AMOUNT",
+    "WORK_STATUS",
+    "PROGRESS_PERCENTAGE",
+    "RECOMMENDATION_DATE",
+    "SANCTION_DATE",
+    "COMPLETION_DATE",
+    "YEAR",
+    "IDA_NAME",
+    "VENDOR_NAME"
+  ]
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "STAR_RATING": 5,
+    "WORK_RECOM_DTL_ID": 162799,
+    "WORK_REVIEW_ID": 5,
+    "REVIEW_DETAIL": "good work"
+  },
+  {
+    "STAR_RATING": 1,
+    "WORK_RECOM_DTL_ID": 161939,
+    "WORK_REVIEW_ID": 4,
+    "REVIEW_DETAIL": "bad"
+  },
+  {
+    "STAR_RATING": 5,
+    "WORK_RECOM_DTL_ID": 118396,
+    "WORK_REVIEW_ID": 3,
+    "REVIEW_DETAIL": "nice"
+  },
+  {
+    "STAR_RATING": 1,
+    "WORK_RECOM_DTL_ID": 194585,
+    "WORK_REVIEW_ID": 2,
+    "REVIEW_DETAIL": "The road is of very bad quality it has been constructed for some months, and it started dissolving also the roads not covered the connecting lanes from the main road"
+  },
+  {
+    "STAR_RATING": 1,
+    "WORK_RECOM_DTL_ID": 140999,
+    "WORK_REVIEW_ID": 1,
+    "REVIEW_DETAIL": "Very bad "
+  }
+]
