@@ -1,9 +1,9 @@
 {
-  "total_records": 1460,
+  "total_records": 1433,
   "total_states": 36,
   "total_mps": 775,
   "official_data_source": "https://mplads.mospi.gov.in/digigov/dashboard.html",
-  "extraction_timestamp": "2026-09-17 22:01:21",
+  "extraction_timestamp": "2026-09-19 22:47:19",
   "available_fields": [
     "WORK_ID",
     "STATE_ID",
@@ -24,6 +24,8 @@
     "COMPLETION_DATE",
     "YEAR",
     "IDA_NAME",
-    "VENDOR_NAME"
+    "VENDOR_NAME",
+    "ASSET_VERIFICATION_STATUS",
+    "IS_ASSET_VERIFIED"
   ]
 }

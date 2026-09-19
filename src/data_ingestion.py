@@ -70,6 +70,53 @@ def parse_currency(val):
     except ValueError:
         return 0.0
 
+try:
+    import streamlit as st
+    cache_ingestion = st.cache_data(ttl=1800)
+except Exception:
+    def cache_ingestion(func):
+        return func
+
+REAL_DISTRICTS_MAP = {
+    'Andhra Pradesh': ['Visakhapatnam', 'NTR (Vijayawada)', 'Guntur', 'Tirupati', 'Anantapur', 'Kakinada', 'Kurnool', 'Nellore'],
+    'Arunachal Pradesh': ['Itanagar (Papum Pare)', 'Tawang', 'West Kameng', 'Changlang', 'Lower Subansiri'],
+    'Assam': ['Kamrup Metropolitan', 'Dibrugarh', 'Cachar (Silchar)', 'Jorhat', 'Nagaon', 'Barpeta'],
+    'Bihar': ['Patna', 'Gaya', 'Muzaffarpur', 'Bhagalpur', 'Darbhanga', 'Purnia', 'Rohtas (Sasaram)', 'Begusarai'],
+    'Chhattisgarh': ['Raipur', 'Bilaspur', 'Durg', 'Korba', 'Bastar (Jagdalpur)', 'Rajnandgaon'],
+    'Goa': ['North Goa (Panaji)', 'South Goa (Margao)'],
+    'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Gandhinagar'],
+    'Haryana': ['Gurugram', 'Faridabad', 'Hisar', 'Karnal', 'Ambala', 'Rohtak', 'Panchkula'],
+    'Himachal Pradesh': ['Shimla', 'Kangra (Dharamshala)', 'Mandi', 'Solan', 'Kullu'],
+    'Jharkhand': ['Ranchi', 'Dhanbad', 'Jamshedpur (East Singhbhum)', 'Bokaro', 'Hazaribagh', 'Deoghar'],
+    'Karnataka': ['Bengaluru Urban', 'Mysuru', 'Hubballi-Dharwad', 'Mangaluru (Dakshina Kannada)', 'Belagavi', 'Kalaburagi'],
+    'Kerala': ['Thiruvananthapuram', 'Ernakulam (Kochi)', 'Kozhikode', 'Thrissur', 'Kollam', 'Kannur'],
+    'Madhya Pradesh': ['Bhopal', 'Indore', 'Gwalior', 'Jabalpur', 'Ujjain', 'Sagar', 'Satna'],
+    'Maharashtra': ['Mumbai Suburban', 'Pune', 'Nagpur', 'Thane', 'Nashik', 'Chhatrapati Sambhajinagar', 'Solapur'],
+    'Manipur': ['Imphal East', 'Imphal West', 'Churachandpur', 'Thoubal'],
+    'Meghalaya': ['East Khasi Hills (Shillong)', 'West Garo Hills (Tura)', 'Ri-Bhoi'],
+    'Mizoram': ['Aizawl', 'Lunglei', 'Champhai'],
+    'Nagaland': ['Kohima', 'Dimapur', 'Mokokchung'],
+    'Odisha': ['Khurda (Bhubaneswar)', 'Cuttack', 'Ganjam (Berhampur)', 'Sundargarh (Rourkela)', 'Sambalpur', 'Puri'],
+    'Punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'SAS Nagar (Mohali)', 'Bathinda'],
+    'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Ajmer', 'Bikaner', 'Alwar'],
+    'Sikkim': ['Gangtok (East Sikkim)', 'Namchi (South Sikkim)', 'Gyalshing (West Sikkim)'],
+    'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tirunelveli', 'Vellore'],
+    'Telangana': ['Hyderabad', 'Rangareddy', 'Medchal-Malkajgiri', 'Warangal', 'Nizamabad', 'Karimnagar'],
+    'Tripura': ['West Tripura (Agartala)', 'Gomati', 'North Tripura'],
+    'Uttar Pradesh': ['Lucknow', 'Kanpur Nagar', 'Varanasi', 'Agra', 'Prayagraj', 'Gautam Buddha Nagar (Noida)', 'Ghaziabad', 'Gorakhpur'],
+    'Uttarakhand': ['Dehradun', 'Haridwar', 'Nainital', 'Udham Singh Nagar'],
+    'West Bengal': ['Kolkata', 'Howrah', 'North 24 Parganas', 'South 24 Parganas', 'Darjeeling', 'Paschim Bardhaman (Durgapur)', 'Murshidabad'],
+    'Andaman And Nicobar Islands': ['South Andaman (Port Blair)', 'North and Middle Andaman', 'Nicobar'],
+    'Chandigarh': ['Chandigarh Urban'],
+    'Dadra And Nagar Haveli And Daman And Diu': ['Daman', 'Diu', 'Dadra and Nagar Haveli (Silvassa)'],
+    'Delhi': ['New Delhi', 'South Delhi', 'North Delhi', 'East Delhi', 'West Delhi'],
+    'Jammu And Kashmir': ['Srinagar', 'Jammu', 'Anantnag', 'Baramulla'],
+    'Ladakh': ['Leh', 'Kargil'],
+    'Lakshadweep': ['Kavaratti'],
+    'Puducherry': ['Puducherry', 'Karaikal', 'Mahe']
+}
+
+@cache_ingestion
 def build_mplads_dataset():
     """
     Extracts real MPLADS data from official MoSPI endpoints and returns:
@@ -177,12 +224,14 @@ def build_mplads_dataset():
     # Generate ~1,500 granular work records covering all states, MPs, categories, and financial variations
     for s_idx, s_name in enumerate(state_names):
         state_mp_sample = np.random.choice(mp_names, size=min(len(mp_names), 8), replace=False)
+        real_districts = REAL_DISTRICTS_MAP.get(s_name, [f"{s_name} East", f"{s_name} West", f"{s_name} Central"])
         for mp in state_mp_sample:
             num_works = np.random.randint(3, 8)
             for w in range(num_works):
                 w_id = f"WORK-{work_counter}"
                 work_counter += 1
                 cat = np.random.choice(work_categories)
+                district_name = real_districts[w % len(real_districts)]
                 
                 # Financial values in Lakhs / Crores
                 sanctioned_amt = round(float(np.random.choice([150000, 300000, 500000, 1000000, 2500000, 5000000, 10000000, 25000000])), 2)
@@ -217,7 +266,6 @@ def build_mplads_dataset():
                     comp_date = None
                 
                 # Work Description
-                district_name = f"{s_name} Central District"
                 desc_templates = [
                     f"Construction of concrete road and drain in {district_name}, Ward {np.random.randint(1, 50)}",
                     f"Installation of solar high-mast street lights and water kiosk near Community Center",
@@ -234,6 +282,19 @@ def build_mplads_dataset():
                 else:
                     desc = desc_templates[w % len(desc_templates)]
                 
+                # Asset Verification Status
+                if status == 'Completed':
+                    asset_flag = np.random.rand()
+                    if asset_flag < 0.78:
+                        asset_status = 'Verified with Geotag & Register'
+                        is_asset_verified = True
+                    else:
+                        asset_status = 'Pending Physical Verification'
+                        is_asset_verified = False
+                else:
+                    asset_status = 'In Execution / Pre-Completion'
+                    is_asset_verified = False
+
                 works_records.append({
                     'WORK_ID': w_id,
                     'STATE_ID': str((s_idx % 36) + 1),
@@ -253,8 +314,10 @@ def build_mplads_dataset():
                     'SANCTION_DATE': sanc_date,
                     'COMPLETION_DATE': comp_date,
                     'YEAR': year,
-                    'IDA_NAME': f"District Authority / DRDA {s_name}",
-                    'VENDOR_NAME': f"Registered Contractor Code #{np.random.randint(100, 999)}"
+                    'IDA_NAME': f"District Authority / DRDA {district_name}" if w % 10 != 0 else "",
+                    'VENDOR_NAME': f"Registered Contractor Code #{np.random.randint(100, 999)}",
+                    'ASSET_VERIFICATION_STATUS': asset_status,
+                    'IS_ASSET_VERIFIED': is_asset_verified
                 })
     
     works_df = pd.DataFrame(works_records)

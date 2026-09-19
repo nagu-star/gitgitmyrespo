@@ -13,6 +13,8 @@ from src.anomaly_detection import detect_anomalies
 from src.duplicate_detection import detect_duplicate_works
 from src.risk_scoring import compute_risk_scoring
 from src.alerts import generate_risk_alerts
+from src.forecasting import compute_predictive_early_warnings
+from src.compliance import audit_mplads_compliance
 
 def precompute():
     print("Precomputing MPLADS AI analytics pipeline...")
@@ -24,16 +26,20 @@ def precompute():
     anom_df = detect_anomalies(fe_df)
     dup_df, duplicates_matrix = detect_duplicate_works(anom_df)
     risk_df = compute_risk_scoring(dup_df)
-    alerts_df = generate_risk_alerts(risk_df)
+    forecasted_df, early_warnings_df = compute_predictive_early_warnings(risk_df)
+    compliant_df, compliance_summary_df = audit_mplads_compliance(forecasted_df)
+    alerts_df = generate_risk_alerts(compliant_df)
     audit_summary, missing_df = audit_data_quality(raw_works_df)
     
     bundle = {
         'states_df': states_df,
         'state_tiles_df': state_tiles_df,
         'mps_df': mps_df,
-        'works_df': risk_df,
+        'works_df': compliant_df,
         'duplicates_matrix': duplicates_matrix,
         'alerts_df': alerts_df,
+        'early_warnings_df': early_warnings_df,
+        'compliance_summary_df': compliance_summary_df,
         'audit_summary': audit_summary,
         'missing_df': missing_df,
         'metadata': metadata
