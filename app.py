@@ -395,6 +395,25 @@ filtered_df = filter_dataset(
     review_status=selected_rev_status
 )
 
+def render_active_filter_banner():
+    active_filters = []
+    if selected_state != 'All States': active_filters.append(f"State: **{selected_state}**")
+    if selected_district != 'All Districts': active_filters.append(f"District: **{selected_district}**")
+    if selected_mp != 'All MPs': active_filters.append(f"MP: **{selected_mp}**")
+    if selected_tenure != 'All Tenures': active_filters.append(f"Tenure: **{selected_tenure}**")
+    if selected_cat != 'All Categories': active_filters.append(f"Category: **{selected_cat}**")
+    if selected_status != 'All Statuses': active_filters.append(f"Status: **{selected_status}**")
+    if selected_risk != 'All Risk Levels': active_filters.append(f"Risk Level: **{selected_risk}**")
+    if selected_rev_status != 'All Review Statuses': active_filters.append(f"Review: **{selected_rev_status}**")
+    
+    scope_str = " | ".join(active_filters) if active_filters else "All Data Scope (No Active Filters)"
+    st.markdown(f"""
+    <div style="font-size: 0.8rem; color: #38bdf8; background: #0f172a; padding: 6px 14px; border-radius: 6px; border: 1px solid #1e293b; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <div>🔍 <strong>Active Selection Scope:</strong> {scope_str}</div>
+        <div style="color: #94a3b8; font-size: 0.78rem;"><strong>{len(filtered_df):,}</strong> works matched</div>
+    </div>
+    """, unsafe_allow_html=True)
+
 # Compute Filtered KPIs
 kpis = compute_kpis(filtered_df)
 
@@ -413,6 +432,7 @@ tab_overview, tab_risk_mon, tab_work_detail, tab_officer_rev, tab_data_sources, 
 # ==========================================
 with tab_overview:
     st.markdown(f"### Monitoring Overview &mdash; {user_role} View")
+    render_active_filter_banner()
     
     st.markdown("""
     <div class="principle-banner">
@@ -506,6 +526,7 @@ with tab_overview:
 # ==========================================
 with tab_risk_mon:
     st.markdown("### Risk Monitoring & Anomaly Matrix")
+    render_active_filter_banner()
     st.markdown("""
     Work items ordered by **Risk Score (Highest First)**. Synthesizes Isolation Forest outlier metrics, utilization-to-progress variance, cost escalation factors, and policy guideline compliance.
     """)
@@ -569,6 +590,7 @@ with tab_risk_mon:
 # ==========================================
 with tab_work_detail:
     st.markdown("### Itemized Work Inspection & XAI Diagnostic")
+    render_active_filter_banner()
     
     work_id_options = filtered_df['WORK_ID'].tolist() if not filtered_df.empty else []
     if work_id_options:
@@ -700,6 +722,7 @@ with tab_work_detail:
 # ==========================================
 with tab_officer_rev:
     st.markdown("### Officer Verification Portal")
+    render_active_filter_banner()
     
     st.markdown("""
     <div class="principle-banner">
@@ -815,6 +838,7 @@ with tab_officer_rev:
 # ==========================================
 with tab_data_sources:
     st.markdown("### Data Architecture & Access Governance")
+    render_active_filter_banner()
     
     st.markdown("""
     System architecture transparently delineates **publicly accessible portal data**, **session-gated API endpoints**, and **future integration streams**.
@@ -875,31 +899,26 @@ with tab_data_sources:
     st.markdown("---")
     
     st.markdown("#### Target Data Pipeline Flowchart")
-    st.code("""
-+-----------------------------------+     +-----------------------------------+
-| MoSPI Public REST Ingestion Engine | --> | Data Cleaning & Currency Normalizer|
-+-----------------------------------+     +-----------------------------------+
-                                                            |
-                                                            v
-+-----------------------------------+     +-----------------------------------+
-| Rule-Based Policy Compliance Engine| <-- | Data Quality Validation Audit     |
-+-----------------------------------+     +-----------------------------------+
-                  |
-                  v
-+-----------------------------------+     +-----------------------------------+
-| Isolation Forest Outlier Detector | --> | Composite Risk Scoring Engine     |
-+-----------------------------------+     +-----------------------------------+
-                                                            |
-                                                            v
-+-----------------------------------+     +-----------------------------------+
-| Human Officer Verification Portal  | <-- | Explainable AI Diagnostic Cards   |
-+-----------------------------------+     +-----------------------------------+
-                  |
-                  v
-+-----------------------------------+
-| Persisted Audit Log & Case Action |
-+-----------------------------------+
-    """, language="text")
+    st.graphviz_chart("""
+    digraph {
+        rankdir=LR;
+        background="transparent";
+        node [shape=box, style="filled,rounded", fillcolor="#1e293b", fontcolor="#f8fafc", fontname="Inter", color="#334155", fontsize=10];
+        edge [color="#38bdf8", penwidth=1.5];
+        
+        A [label="MoSPI Public REST Ingestion Engine\n(mplads.mospi.gov.in)"];
+        B [label="Data Cleaning &\nCurrency Normalizer"];
+        C [label="Data Quality Validation\n& Null Audit"];
+        D [label="Rule-Based Policy\nCompliance Engine"];
+        E [label="Isolation Forest\nOutlier Detector"];
+        F [label="Composite Risk Scoring\n(0-100 Score)"];
+        G [label="Explainable AI\nDiagnostic Cards"];
+        H [label="Human Officer\nVerification Portal"];
+        I [label="Persisted Audit Log\n& Action Engine"];
+        
+        A -> B -> C -> D -> E -> F -> G -> H -> I;
+    }
+    """, use_container_width=True)
 
     st.markdown("---")
     

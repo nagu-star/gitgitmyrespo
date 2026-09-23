@@ -266,22 +266,57 @@ def build_mplads_dataset():
                 else:
                     comp_date = None
                 
-                # Work Description
-                desc_templates = [
-                    f"Construction of concrete road and drain in {district_name}, Ward {np.random.randint(1, 50)}",
-                    f"Installation of solar high-mast street lights and water kiosk near Community Center",
-                    f"Construction of additional school classrooms and library hall in Govt High School",
-                    f"Provision of piped drinking water supply scheme and tubewell installation",
-                    f"Construction of multi-purpose community hall and public amenities block",
-                    f"Upgradation of primary health center infrastructure and diagnostic equipment support",
-                    f"Development of rural sports complex and playground facilities"
-                ]
+                # Work Description strictly aligned with WORK_CATEGORY
+                category_desc_map = {
+                    'Roads, Bridges & Connectivity': [
+                        f"Construction of concrete road and drain in {district_name}, Ward {np.random.randint(1, 50)}",
+                        f"Widening and asphalt paving of arterial connecting road in {district_name}",
+                        f"Construction of concrete culvert and approach road near Village Panchayat"
+                    ],
+                    'Drinking Water & Sanitation': [
+                        f"Provision of piped drinking water supply scheme and tubewell installation in {district_name}",
+                        f"Installation of RO water purification plant and public water kiosk in {district_name}",
+                        f"Construction of public sanitation block and community drainage system in {district_name}"
+                    ],
+                    'Education & School Infrastructure': [
+                        f"Construction of additional school classrooms and library hall in Govt High School, {district_name}",
+                        f"Provision of computer lab infrastructure and smart classrooms in Govt School, {district_name}",
+                        f"Upgradation of drinking water and toilet facilities in Govt Primary School, {district_name}"
+                    ],
+                    'Public Health & Community Centers': [
+                        f"Upgradation of primary health center infrastructure and diagnostic equipment support in {district_name}",
+                        f"Construction of sub-center health facility and emergency care room in {district_name}",
+                        f"Provision of medical storage facility and patient waiting block for PHC in {district_name}"
+                    ],
+                    'Electricity & Renewable Energy': [
+                        f"Installation of solar high-mast street lights and solar panels in {district_name}",
+                        f"Electrification and transformer installation for rural habitations in {district_name}",
+                        f"Solar LED street lighting project for public village pathways in {district_name}"
+                    ],
+                    'Irrigation & Flood Control': [
+                        f"Construction of check dam and irrigation canal lining in {district_name}",
+                        f"Desalting and embankment strengthening of public flood control channel in {district_name}",
+                        f"Installation of lift irrigation pump set and water storage tank in {district_name}"
+                    ],
+                    'Sports Facilities & Parks': [
+                        f"Development of rural sports complex and playground facilities in {district_name}",
+                        f"Construction of badminton court and outdoor gymnasium park in {district_name}",
+                        f"Installation of sports turf and spectator seating gallery in {district_name}"
+                    ],
+                    'Community Halls & Crematoriums': [
+                        f"Construction of multi-purpose community hall and public amenities block in {district_name}",
+                        f"Upgradation of public crematorium shed and paved approach area in {district_name}",
+                        f"Construction of Panchayat community center and gathering space in {district_name}"
+                    ]
+                }
                 
-                # Add duplicate simulation for specific items
+                cat_descs = category_desc_map.get(cat, [f"Construction and development work for {cat} in {district_name}"])
+                
+                # Add duplicate simulation for specific items within the same category
                 if anomaly_flag > 0.94:
-                    desc = desc_templates[0]  # Standard description for duplicate detection testing
+                    desc = cat_descs[0]  # Standard description for duplicate detection testing within category
                 else:
-                    desc = desc_templates[w % len(desc_templates)]
+                    desc = cat_descs[w % len(cat_descs)]
                 
                 # Asset Verification Status
                 if status == 'Completed':
