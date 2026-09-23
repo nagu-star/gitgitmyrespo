@@ -36,7 +36,7 @@ from src.officer_review import load_officer_reviews, save_officer_review, merge_
 
 # Page configuration
 st.set_page_config(
-    page_title="MPLADS Expenditure & Risk Monitoring Platform",
+    page_title="AI Fraud, Anomaly & Duplicate Work Detection System | MPLADS",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -290,14 +290,14 @@ st.markdown("""
 <div class="app-header">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
         <div>
-            <h1 class="app-title">MPLADS Expenditure & Risk Monitoring Platform</h1>
-            <div class="app-subtitle">Ministry of Statistics and Programme Implementation (MoSPI) &mdash; Data Analytics & Audit Copilot</div>
-            <div>
-                <span class="gov-tag">Data Ingestion</span>
-                <span class="gov-tag">Compliance Audit</span>
-                <span class="gov-tag">Isolation Forest</span>
-                <span class="gov-tag">XAI Diagnostics</span>
-                <span class="gov-tag">Officer Verification</span>
+            <h1 class="app-title">AI-Powered Fraud, Anomaly & Duplicate Work Detection System</h1>
+            <div class="app-subtitle">Ministry of Statistics and Programme Implementation (MoSPI) &mdash; Forensic Analytics & Audit Copilot</div>
+            <div style="margin-top: 8px;">
+                <span class="gov-tag" style="border-color: #38bdf8; color: #38bdf8; font-weight: 700;">🔍 Duplicate Work Detection (TF-IDF)</span>
+                <span class="gov-tag" style="border-color: #f59e0b; color: #fde047; font-weight: 700;">⚠️ Anomaly Detection (Isolation Forest)</span>
+                <span class="gov-tag" style="border-color: #ef4444; color: #fca5a5; font-weight: 700;">🛡️ Fraud & Risk Scoring</span>
+                <span class="gov-tag">🤖 XAI Diagnostics</span>
+                <span class="gov-tag">👮 Officer Verification</span>
             </div>
         </div>
         <div style="background: #1e293b; padding: 12px 16px; border-radius: 6px; border: 1px solid #334155; min-width: 220px;">
