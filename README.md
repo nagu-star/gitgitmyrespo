@@ -4,7 +4,7 @@
 
 ---
 
-## ⭐ Why This Stands Out (SIH 2026 USPs)
+## ⭐ Why This Stands Out 
 
 Unlike standard hackathon dashboards that merely plot financial utilization, **AuditGrievance AI** operates as an audit-grade intelligence platform:
 
