@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def filter_dataset(df, state=None, district=None, mp=None, tenure=None, category=None, status=None, risk_level=None):
+def filter_dataset(df, state=None, district=None, mp=None, tenure=None, category=None, status=None, risk_level=None, review_status=None):
     """
     Apply interactive filters to the dataset.
     """
@@ -25,12 +25,16 @@ def filter_dataset(df, state=None, district=None, mp=None, tenure=None, category
     if risk_level and risk_level != 'All Risk Levels':
         if 'RISK_LEVEL' in filtered.columns:
             filtered = filtered[filtered['RISK_LEVEL'] == risk_level]
+    if review_status and review_status != 'All Review Statuses':
+        if 'REVIEW_STATUS' in filtered.columns:
+            filtered = filtered[filtered['REVIEW_STATUS'] == review_status]
 
     return filtered
 
 def compute_kpis(df):
     """
-    Compute summary KPIs from dataset.
+    Compute summary KPIs from dataset using REAL available metrics.
+    If data is missing or empty, returns appropriate fallback counts or 'Data unavailable'.
     """
     if df is None or df.empty:
         return {
@@ -43,25 +47,42 @@ def compute_kpis(df):
             'ongoing_works': 0,
             'pending_works': 0,
             'delayed_works': 0,
+            'critical_risk_works': 0,
             'high_risk_works': 0,
+            'medium_risk_works': 0,
+            'low_risk_works': 0,
             'anomalous_works': 0,
-            'duplicate_works': 0
+            'duplicate_works': 0,
+            'pending_review_works': 0,
+            'verified_works': 0,
+            'needs_investigation_works': 0,
+            'false_positive_works': 0
         }
 
     total_works = len(df)
-    sanc_sum = float(df['SANCTION_AMOUNT'].sum())
-    exp_sum = float(df['EXPENDITURE_AMOUNT'].sum())
+    sanc_sum = float(df['SANCTION_AMOUNT'].sum()) if 'SANCTION_AMOUNT' in df.columns else 0.0
+    exp_sum = float(df['EXPENDITURE_AMOUNT'].sum()) if 'EXPENDITURE_AMOUNT' in df.columns else 0.0
     rem_sum = max(0.0, sanc_sum - exp_sum)
     util_rate = round((exp_sum / sanc_sum * 100.0), 2) if sanc_sum > 0 else 0.0
 
-    comp_cnt = int((df['WORK_STATUS'] == 'Completed').sum())
-    ong_cnt = int((df['WORK_STATUS'] == 'Ongoing').sum())
-    pend_cnt = int((df['WORK_STATUS'].isin(['Sanctioned / Pending', 'Pending'])).sum())
-    del_cnt = int((df['WORK_STATUS'] == 'Delayed').sum())
+    comp_cnt = int((df['WORK_STATUS'] == 'Completed').sum()) if 'WORK_STATUS' in df.columns else 0
+    ong_cnt = int((df['WORK_STATUS'] == 'Ongoing').sum()) if 'WORK_STATUS' in df.columns else 0
+    pend_cnt = int((df['WORK_STATUS'].isin(['Sanctioned / Pending', 'Pending'])).sum()) if 'WORK_STATUS' in df.columns else 0
+    del_cnt = int((df['WORK_STATUS'] == 'Delayed').sum()) if 'WORK_STATUS' in df.columns else 0
 
-    high_risk_cnt = int((df['RISK_LEVEL'].isin(['HIGH', 'CRITICAL'])).sum()) if 'RISK_LEVEL' in df.columns else 0
+    crit_risk_cnt = int((df['RISK_LEVEL'] == 'CRITICAL').sum()) if 'RISK_LEVEL' in df.columns else 0
+    high_risk_cnt = int((df['RISK_LEVEL'] == 'HIGH').sum()) if 'RISK_LEVEL' in df.columns else 0
+    med_risk_cnt = int((df['RISK_LEVEL'] == 'MEDIUM').sum()) if 'RISK_LEVEL' in df.columns else 0
+    low_risk_cnt = int((df['RISK_LEVEL'] == 'LOW').sum()) if 'RISK_LEVEL' in df.columns else 0
+
     anom_cnt = int((df['IS_ANOMALY'] == True).sum()) if 'IS_ANOMALY' in df.columns else 0
     dup_cnt = int((df['IS_DUPLICATE_FLAG'] == True).sum()) if 'IS_DUPLICATE_FLAG' in df.columns else 0
+
+    # Officer Review Counts
+    pending_rev_cnt = int((df['REVIEW_STATUS'] == 'Pending Review').sum()) if 'REVIEW_STATUS' in df.columns else total_works
+    ver_cnt = int((df['REVIEW_STATUS'] == 'Verified').sum()) if 'REVIEW_STATUS' in df.columns else 0
+    inv_cnt = int((df['REVIEW_STATUS'] == 'Needs Investigation').sum()) if 'REVIEW_STATUS' in df.columns else 0
+    fp_cnt = int((df['REVIEW_STATUS'] == 'False Positive').sum()) if 'REVIEW_STATUS' in df.columns else 0
 
     return {
         'total_works': total_works,
@@ -73,9 +94,17 @@ def compute_kpis(df):
         'ongoing_works': ong_cnt,
         'pending_works': pend_cnt,
         'delayed_works': del_cnt,
+        'critical_risk_works': crit_risk_cnt,
         'high_risk_works': high_risk_cnt,
+        'high_and_critical_risk': crit_risk_cnt + high_risk_cnt,
+        'medium_risk_works': med_risk_cnt,
+        'low_risk_works': low_risk_cnt,
         'anomalous_works': anom_cnt,
-        'duplicate_works': dup_cnt
+        'duplicate_works': dup_cnt,
+        'pending_review_works': pending_rev_cnt,
+        'verified_works': ver_cnt,
+        'needs_investigation_works': inv_cnt,
+        'false_positive_works': fp_cnt
     }
 
 def aggregate_by_state(df):

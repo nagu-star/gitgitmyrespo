@@ -295,6 +295,36 @@ def build_mplads_dataset():
                     asset_status = 'In Execution / Pre-Completion'
                     is_asset_verified = False
 
+                # Generate spatial coordinates (India lat 15-28, lon 73-88)
+                base_lat = 18.0 + (s_idx % 12) * 0.8
+                base_lon = 75.0 + (s_idx % 10) * 1.2
+                work_lat = base_lat + np.random.uniform(-0.1, 0.1)
+                work_lon = base_lon + np.random.uniform(-0.1, 0.1)
+
+                # Photo EXIF simulation (10% geofence mismatch >100m, 5% duplicate photo hash)
+                if anomaly_flag < 0.10:
+                    exif_lat = work_lat + np.random.uniform(0.003, 0.015) # ~300m - 1.5km offset
+                    exif_lon = work_lon + np.random.uniform(0.003, 0.015)
+                else:
+                    exif_lat = work_lat + np.random.uniform(-0.0003, 0.0003) # <35m
+                    exif_lon = work_lon + np.random.uniform(-0.0003, 0.0003)
+
+                photo_hash = f"PHASH-{hash(s_name + district_name) % 100000:06d}" if anomaly_flag > 0.95 else f"PHASH-{work_counter:06d}"
+
+                # Vendor name generation with cartel / split-tendering simulation
+                # Sub-25L tender splitting simulation for specific works
+                if 0.15 <= anomaly_flag < 0.22:
+                    vendor_name = f"Apex Infrastructure & Co ({district_name})"
+                    sanctioned_amt = round(float(np.random.choice([2420000, 2450000, 2480000, 2490000])), 2)
+                    expenditure_amt = round(sanctioned_amt * float(np.random.uniform(0.90, 1.05)), 2)
+                elif anomaly_flag < 0.35:
+                    vendor_name = f"M/S {district_name} Civil Works Syndicate"
+                else:
+                    vendor_name = f"Registered Contractor Code #{np.random.randint(100, 350)}"
+
+                # Planned vs Actual Progress
+                planned_pct = 100.0 if status == 'Completed' else float(min(100.0, progress_pct + np.random.uniform(10, 45)))
+
                 works_records.append({
                     'WORK_ID': w_id,
                     'STATE_ID': str((s_idx % 36) + 1),
@@ -310,12 +340,18 @@ def build_mplads_dataset():
                     'EXPENDITURE_AMOUNT': expenditure_amt,
                     'WORK_STATUS': status,
                     'PROGRESS_PERCENTAGE': round(progress_pct, 1),
+                    'PLANNED_PROGRESS_PERCENT': round(planned_pct, 1),
                     'RECOMMENDATION_DATE': rec_date,
                     'SANCTION_DATE': sanc_date,
                     'COMPLETION_DATE': comp_date,
                     'YEAR': year,
                     'IDA_NAME': f"District Authority / DRDA {district_name}" if w % 10 != 0 else "",
-                    'VENDOR_NAME': f"Registered Contractor Code #{np.random.randint(100, 999)}",
+                    'VENDOR_NAME': vendor_name,
+                    'LATITUDE': round(work_lat, 6),
+                    'LONGITUDE': round(work_lon, 6),
+                    'EXIF_LATITUDE': round(exif_lat, 6),
+                    'EXIF_LONGITUDE': round(exif_lon, 6),
+                    'PHOTO_HASH': photo_hash,
                     'ASSET_VERIFICATION_STATUS': asset_status,
                     'IS_ASSET_VERIFIED': is_asset_verified
                 })

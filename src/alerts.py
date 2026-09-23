@@ -13,7 +13,17 @@ def generate_risk_alerts(df, min_risk_level='MEDIUM'):
     alerts_list = []
     for idx, row in high_risk_df.iterrows():
         issue = "Potential Irregularity / Requires Investigation"
-        if row.get('EXPENDITURE_AMOUNT', 0) > row.get('SANCTION_AMOUNT', 0):
+        if row.get('IS_CROSS_SCHEME_DUPLICATE', False):
+            issue = "Cross-Scheme Double Funding Overlap"
+        elif row.get('IS_SPLIT_TENDER', False):
+            issue = "Split-Tender Evasion & Vendor Cartel Flag"
+        elif row.get('IS_GEO_MISMATCH', False):
+            issue = "Photo Geofence Mismatch (>100m Variance)"
+        elif row.get('IS_DUPLICATE_PHOTO', False):
+            issue = "Reused Progress Photo Fraud"
+        elif row.get('IS_STAGNANT_SCURVE', False):
+            issue = "S-Curve Progress Stagnation / Financial Lead"
+        elif row.get('EXPENDITURE_AMOUNT', 0) > row.get('SANCTION_AMOUNT', 0):
             issue = "Cost Overrun & Financial Discrepancy"
         elif row.get('IS_DUPLICATE_FLAG', False):
             issue = "Potential Duplicate Work Detected"
@@ -21,7 +31,15 @@ def generate_risk_alerts(df, min_risk_level='MEDIUM'):
             issue = "Prolonged Execution Delay"
 
         # Suggested Review
-        if issue == "Cost Overrun & Financial Discrepancy":
+        if issue == "Cross-Scheme Double Funding Overlap":
+            review = f"Cross-verify work location with {row.get('CROSS_SCHEME_MATCH_NAME', 'parallel scheme')} database before releasing funds."
+        elif issue == "Split-Tender Evasion & Vendor Cartel Flag":
+            review = "Freeze direct contract awards; consolidate packages into open competitive e-tenders."
+        elif issue == "Photo Geofence Mismatch (>100m Variance)":
+            review = "Require mandatory re-upload of geotagged image at exact sanctioned coordinates via mobile portal."
+        elif issue == "S-Curve Progress Stagnation / Financial Lead":
+            review = "Hold financial disbursement; demand physical stage-completion milestone audit."
+        elif issue == "Cost Overrun & Financial Discrepancy":
             review = "Audit expenditure Vouchers and verify revised sanction approvals."
         elif issue == "Potential Duplicate Work Detected":
             review = "Inspect site location and cross-verify with previously sanctioned works."
