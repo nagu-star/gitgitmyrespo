@@ -1067,8 +1067,7 @@ with tab_advanced:
         
         filtered_work_ids = set(filtered_df['WORK_ID'].unique()) if not filtered_df.empty else set()
         
-        duplicates_matrix = None
-        if not duplicates_matrix.empty and filtered_work_ids:
+        if duplicates_matrix is not None and not duplicates_matrix.empty and filtered_work_ids:
             filtered_dup = duplicates_matrix[
                 duplicates_matrix['Work A ID'].isin(filtered_work_ids) | 
                 duplicates_matrix['Work B ID'].isin(filtered_work_ids)
@@ -1096,7 +1095,7 @@ with tab_advanced:
         """)
 
         filtered_work_ids = set(filtered_df['WORK_ID'].unique()) if not filtered_df.empty else set()
-        filtered_comp = compliance_summary_df[compliance_summary_df['Work ID'].isin(filtered_work_ids)] if not compliance_summary_df.empty else pd.DataFrame()
+        filtered_comp = compliance_summary_df[compliance_summary_df['Work ID'].isin(filtered_work_ids)] if (compliance_summary_df is not None and not compliance_summary_df.empty) else pd.DataFrame()
 
         total_violations = len(filtered_comp)
         ceiling_breaches = len(filtered_comp[filtered_comp['Triggered Policy Rules'].str.contains('Fund Ceiling Breach', na=False)]) if not filtered_comp.empty else 0
