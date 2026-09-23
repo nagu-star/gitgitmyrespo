@@ -1,6 +1,16 @@
+import os
+import sys
+
+# Ensure root project directory is in sys.path when executed directly
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import pandas as pd
 import numpy as np
-from src.cross_scheme import _haversine_distance
+
+try:
+    from src.cross_scheme import _haversine_distance
+except ModuleNotFoundError:
+    from cross_scheme import _haversine_distance
 
 def audit_photo_geofence_and_hashes(works_df, distance_threshold_meters=100.0):
     """
