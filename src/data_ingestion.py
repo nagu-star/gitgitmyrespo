@@ -71,6 +71,7 @@ def parse_currency(val):
         return 0.0
 
 try:
+    # pyrefly: ignore [missing-import]
     import streamlit as st
     cache_ingestion = st.cache_data(ttl=1800)
 except Exception:

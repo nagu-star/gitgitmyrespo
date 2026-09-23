@@ -1,4 +1,6 @@
 # pyrefly: ignore [missing-import]
+import pickle
+# pyrefly: ignore [missing-import]
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -8,7 +10,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import os
 import sys
-import pickle
 
 # Set pandas option to allow larger styled tables
 pd.set_option("styler.render.max_elements", 2500000)
@@ -978,8 +979,15 @@ with tab_advanced:
         Cross-references embedded EXIF GPS coordinates from submitted progress photos against official sanctioned location coordinates (>100m threshold) and evaluates milestone burn-rate velocity.
         """)
         
-        geo_mismatches = filtered_df[filtered_df.get('IS_GEO_MISMATCH', False) == True]
-        dup_photos = filtered_df[filtered_df.get('IS_DUPLICATE_PHOTO', False) == True]
+        if 'IS_GEO_MISMATCH' in filtered_df.columns:
+            geo_mismatches = filtered_df[filtered_df['IS_GEO_MISMATCH'] == True]
+        else:
+            geo_mismatches = filtered_df.iloc[0:0].copy()
+            
+        if 'IS_DUPLICATE_PHOTO' in filtered_df.columns:
+            dup_photos = filtered_df[filtered_df['IS_DUPLICATE_PHOTO'] == True]
+        else:
+            dup_photos = filtered_df.iloc[0:0].copy()
         
         col_g1, col_g2, col_g3 = st.columns(3)
         col_g1.metric("EXIF Geofence Mismatches (>100m)", f"{len(geo_mismatches):,}")
@@ -1012,9 +1020,9 @@ with tab_advanced:
         ongoing_df = filtered_df[filtered_df['WORK_STATUS'].isin(['Ongoing', 'Sanctioned / Pending', 'Delayed', 'Incomplete with High Exp'])].copy()
         
         if not ongoing_df.empty:
-            early_warn_count = len(ongoing_df[ongoing_df['IS_EARLY_WARNING'] == True])
-            high_warn_count = len(ongoing_df[ongoing_df['EARLY_WARNING_LEVEL'] == 'HIGH RISK WARNING'])
-            avg_overrun_pct = ongoing_df['PROJECTED_OVERRUN_PCT'].mean()
+            early_warn_count = len(ongoing_df[ongoing_df['IS_EARLY_WARNING'] == True]) if 'IS_EARLY_WARNING' in ongoing_df.columns else 0
+            high_warn_count = len(ongoing_df[ongoing_df['EARLY_WARNING_LEVEL'] == 'HIGH RISK WARNING']) if 'EARLY_WARNING_LEVEL' in ongoing_df.columns else 0
+            avg_overrun_pct = ongoing_df['PROJECTED_OVERRUN_PCT'].mean() if 'PROJECTED_OVERRUN_PCT' in ongoing_df.columns else 0.0
             
             c_ew1, c_ew2, c_ew3, c_ew4 = st.columns(4)
             c_ew1.metric("Ongoing Works Monitored", f"{len(ongoing_df):,}")
@@ -1024,7 +1032,12 @@ with tab_advanced:
 
             st.markdown("---")
             
-            early_flagged = ongoing_df[ongoing_df['IS_EARLY_WARNING'] == True].sort_values(by='EARLY_WARNING_SCORE', ascending=False)
+            if 'IS_EARLY_WARNING' in ongoing_df.columns and 'EARLY_WARNING_SCORE' in ongoing_df.columns:
+                early_flagged = ongoing_df[ongoing_df['IS_EARLY_WARNING'] == True].sort_values(by='EARLY_WARNING_SCORE', ascending=False)
+            elif 'IS_EARLY_WARNING' in ongoing_df.columns:
+                early_flagged = ongoing_df[ongoing_df['IS_EARLY_WARNING'] == True]
+            else:
+                early_flagged = ongoing_df.iloc[0:0].copy()
             
             if not early_flagged.empty:
                 display_ew = early_flagged[['WORK_ID', 'STATE_NAME', 'DISTRICT_NAME', 'WORK_CATEGORY', 'SANCTION_AMOUNT', 'EXPENDITURE_AMOUNT', 'PROGRESS_PERCENTAGE', 'PREDICTED_FINAL_COST', 'PROJECTED_OVERRUN_PCT', 'PROJECTED_DELAY_MONTHS', 'EARLY_WARNING_LEVEL', 'EARLY_WARNING_REASON']].copy()
