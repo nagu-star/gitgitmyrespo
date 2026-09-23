@@ -23,6 +23,7 @@ from src.data_validation import audit_data_quality
 from src.feature_engineering import engineer_mplads_features
 from src.anomaly_detection import detect_anomalies
 from src.duplicate_detection import detect_duplicate_works
+from src.photo_geofence import audit_photo_geofence_and_hashes
 from src.risk_scoring import compute_risk_scoring
 from src.alerts import generate_risk_alerts
 from src.insights import generate_work_explanation
@@ -273,7 +274,8 @@ def load_processed_data():
     fe_df = engineer_mplads_features(cleaned_df)
     anom_df = detect_anomalies(fe_df)
     dup_df, duplicates_matrix = detect_duplicate_works(anom_df)
-    risk_df = compute_risk_scoring(dup_df)
+    photo_df = audit_photo_geofence_and_hashes(dup_df)
+    risk_df = compute_risk_scoring(photo_df)
     forecasted_df, early_warnings_df = compute_predictive_early_warnings(risk_df)
     compliant_df, compliance_summary_df = audit_mplads_compliance(forecasted_df)
     alerts_df = generate_risk_alerts(compliant_df)
