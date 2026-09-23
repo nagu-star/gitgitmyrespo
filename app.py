@@ -1067,6 +1067,7 @@ with tab_advanced:
         
         filtered_work_ids = set(filtered_df['WORK_ID'].unique()) if not filtered_df.empty else set()
         
+        duplicates_matrix = None
         if not duplicates_matrix.empty and filtered_work_ids:
             filtered_dup = duplicates_matrix[
                 duplicates_matrix['Work A ID'].isin(filtered_work_ids) | 
