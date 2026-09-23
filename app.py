@@ -258,13 +258,14 @@ def load_processed_data():
                 b = pickle.load(f)
                 return (
                     b['states_df'], b['state_tiles_df'], b['mps_df'], 
-                    b['works_df'], b['duplicates_matrix'], b['alerts_df'], 
+                    b['works_df'], b.get('duplicates_matrix', pd.DataFrame()),
+                    b.get('alerts_df', pd.DataFrame()), 
                     b.get('early_warnings_df', pd.DataFrame()),
                     b.get('compliance_summary_df', pd.DataFrame()),
-                    b['audit_summary'], b['missing_df'], b['metadata']
+                    b.get('audit_summary', {}), b.get('missing_df', pd.DataFrame()), b.get('metadata', {})
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            st.warning(f"Note: Precomputed bundle could not be unpickled ({e}). Recomputing pipeline...")
 
     # Fallback compute if bundle is missing
     states_df, state_tiles_df, mps_df, raw_works_df, metadata = build_mplads_dataset()
