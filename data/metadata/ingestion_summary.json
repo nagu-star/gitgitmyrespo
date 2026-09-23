@@ -1,9 +1,9 @@
 {
-  "total_records": 1449,
+  "total_records": 1475,
   "total_states": 36,
   "total_mps": 775,
   "official_data_source": "https://mplads.mospi.gov.in/digigov/dashboard.html",
-  "extraction_timestamp": "2026-09-24 02:49:55",
+  "extraction_timestamp": "2026-09-24 03:13:07",
   "available_fields": [
     "WORK_ID",
     "STATE_ID",
@@ -28,9 +28,6 @@
     "VENDOR_NAME",
     "LATITUDE",
     "LONGITUDE",
-    "EXIF_LATITUDE",
-    "EXIF_LONGITUDE",
-    "PHOTO_HASH",
     "ASSET_VERIFICATION_STATUS",
     "IS_ASSET_VERIFIED"
   ]

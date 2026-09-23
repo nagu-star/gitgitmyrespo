@@ -337,16 +337,6 @@ def build_mplads_dataset():
                 work_lat = base_lat + np.random.uniform(-0.1, 0.1)
                 work_lon = base_lon + np.random.uniform(-0.1, 0.1)
 
-                # Photo EXIF simulation (10% geofence mismatch >100m, 5% duplicate photo hash)
-                if anomaly_flag < 0.10:
-                    exif_lat = work_lat + np.random.uniform(0.003, 0.015) # ~300m - 1.5km offset
-                    exif_lon = work_lon + np.random.uniform(0.003, 0.015)
-                else:
-                    exif_lat = work_lat + np.random.uniform(-0.0003, 0.0003) # <35m
-                    exif_lon = work_lon + np.random.uniform(-0.0003, 0.0003)
-
-                photo_hash = f"PHASH-{hash(s_name + district_name) % 100000:06d}" if anomaly_flag > 0.95 else f"PHASH-{work_counter:06d}"
-
                 # Vendor name generation with cartel / split-tendering simulation
                 # Sub-25L tender splitting simulation for specific works
                 if 0.15 <= anomaly_flag < 0.22:
@@ -385,9 +375,6 @@ def build_mplads_dataset():
                     'VENDOR_NAME': vendor_name,
                     'LATITUDE': round(work_lat, 6),
                     'LONGITUDE': round(work_lon, 6),
-                    'EXIF_LATITUDE': round(exif_lat, 6),
-                    'EXIF_LONGITUDE': round(exif_lon, 6),
-                    'PHOTO_HASH': photo_hash,
                     'ASSET_VERIFICATION_STATUS': asset_status,
                     'IS_ASSET_VERIFIED': is_asset_verified
                 })

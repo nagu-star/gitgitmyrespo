@@ -65,16 +65,7 @@ def compute_risk_scoring(df):
             base_score += 25.0
             factors.append(f"Split-Tendering (+25 pts): Sub-₹25L package cluster awarded under high vendor concentration")
 
-        # 7. Photo Geofence & Spatial Spoofing (+25 pts)
-        if row.get('IS_GEO_MISMATCH', False):
-            dist_m = row.get('GEOFENCE_DISTANCE_METERS', 0.0)
-            base_score += 25.0
-            factors.append(f"Photo Geofence Mismatch (+25 pts): EXIF location variance of {dist_m}m from sanctioned site")
-        if row.get('IS_DUPLICATE_PHOTO', False):
-            base_score += 20.0
-            factors.append("Reused Photo Fraud (+20 pts): Perceptual image hash matches another work item")
-
-        # 8. S-Curve Progress Stagnation (+20 pts)
+        # 7. S-Curve Progress Stagnation (+20 pts)
         if row.get('IS_STAGNANT_SCURVE', False):
             base_score += 20.0
             factors.append("S-Curve Stagnation (+20 pts): Critical financial expenditure lead velocity relative to physical work completion")

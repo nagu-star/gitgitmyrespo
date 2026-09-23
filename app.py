@@ -23,7 +23,6 @@ from src.data_validation import audit_data_quality
 from src.feature_engineering import engineer_mplads_features
 from src.anomaly_detection import detect_anomalies
 from src.duplicate_detection import detect_duplicate_works
-from src.photo_geofence import audit_photo_geofence_and_hashes
 from src.risk_scoring import compute_risk_scoring
 from src.alerts import generate_risk_alerts
 from src.insights import generate_work_explanation
@@ -274,8 +273,7 @@ def load_processed_data():
     fe_df = engineer_mplads_features(cleaned_df)
     anom_df = detect_anomalies(fe_df)
     dup_df, duplicates_matrix = detect_duplicate_works(anom_df)
-    photo_df = audit_photo_geofence_and_hashes(dup_df)
-    risk_df = compute_risk_scoring(photo_df)
+    risk_df = compute_risk_scoring(dup_df)
     forecasted_df, early_warnings_df = compute_predictive_early_warnings(risk_df)
     compliant_df, compliance_summary_df = audit_mplads_compliance(forecasted_df)
     alerts_df = generate_risk_alerts(compliant_df)
@@ -995,49 +993,44 @@ with tab_advanced:
         else:
             st.success("No cross-scheme spatial overlaps detected in active filter selection.")
 
-    # SUB-TAB 2: PHOTO GEOFENCE & S-CURVE
+    # SUB-TAB 2: S-CURVE PROGRESS VELOCITY
     with sub_t2:
-        st.markdown("#### Spatial Geofence Variance & Progress S-Curve Velocity")
+        st.markdown("#### Progress S-Curve Milestone & Burn-Rate Velocity")
         st.markdown("""
-        Cross-references embedded EXIF GPS coordinates from submitted progress photos against official sanctioned location coordinates (>100m threshold) and evaluates milestone burn-rate velocity.
+        Evaluates physical milestone burn-rate velocity and financial expenditure lead variance across implementation works.
         """)
         
         st.markdown("""
-        <div style="background: #1e293b; border: 1px solid #334155; border-left: 4px solid #f59e0b; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.83rem; color: #cbd5e1;">
-            🔒 <strong>Data Architecture Note:</strong> Public MoSPI REST APIs do not publicly serve raw binary photo attachments. Photo EXIF GPS coordinates and perceptual hashes are evaluated using simulated metadata sandbox streams. Direct binary photo verification requires authenticated e-SAKSHI portal OAuth credentials.
+        <div style="background: #1e293b; border: 1px solid #334155; border-left: 4px solid #38bdf8; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.83rem; color: #cbd5e1;">
+            ℹ️ <strong>Data Architecture Scope:</strong> Public MoSPI REST API endpoints provide official financial, physical progress, and milestone data. Progress photo attachments are restricted to authenticated e-SAKSHI portal credentials and are excluded from public portal streams.
         </div>
         """, unsafe_allow_html=True)
         
-        if 'IS_GEO_MISMATCH' in filtered_df.columns:
-            geo_mismatches = filtered_df[filtered_df['IS_GEO_MISMATCH'] == True]
+        if 'IS_STAGNANT_SCURVE' in filtered_df.columns:
+            stagnant_df = filtered_df[filtered_df['IS_STAGNANT_SCURVE'] == True]
         else:
-            geo_mismatches = filtered_df.iloc[0:0].copy()
+            stagnant_df = filtered_df.iloc[0:0].copy()
             
-        if 'IS_DUPLICATE_PHOTO' in filtered_df.columns:
-            dup_photos = filtered_df[filtered_df['IS_DUPLICATE_PHOTO'] == True]
-        else:
-            dup_photos = filtered_df.iloc[0:0].copy()
+        c_sc1, c_sc2, c_sc3 = st.columns(3)
+        c_sc1.metric("Audited Works Scope", f"{len(filtered_df):,}")
+        c_sc2.metric("S-Curve Stagnation Flags", f"{len(stagnant_df):,}")
+        c_sc3.metric("Avg Physical Progress", f"{filtered_df['PROGRESS_PERCENTAGE'].mean():.1f}%" if not filtered_df.empty else "0.0%")
         
-        col_g1, col_g2, col_g3 = st.columns(3)
-        col_g1.metric("EXIF Geofence Mismatches (>100m)", f"{len(geo_mismatches):,}")
-        col_g2.metric("Reused Photo Hash Flags", f"{len(dup_photos):,}")
-        col_g3.metric("Avg Variance Distance", f"{geo_mismatches['GEOFENCE_DISTANCE_METERS'].mean():.1f} m" if not geo_mismatches.empty and 'GEOFENCE_DISTANCE_METERS' in geo_mismatches.columns else "0 m")
-        
-        if not geo_mismatches.empty:
-            st.error("Geofence Variance Flagged: Submitted photo EXIF coordinates vary by >100m from sanctioned site coordinates.")
-            display_geo = geo_mismatches[['WORK_ID', 'STATE_NAME', 'DISTRICT_NAME', 'WORK_CATEGORY', 'GEOFENCE_DISTANCE_METERS', 'LATITUDE', 'LONGITUDE', 'EXIF_LATITUDE', 'EXIF_LONGITUDE']].copy()
+        if not stagnant_df.empty:
+            st.warning("Milestone Velocity Lag: Works exhibiting high financial expenditure lead velocity relative to physical completion percentage.")
+            display_sc = stagnant_df[['WORK_ID', 'STATE_NAME', 'DISTRICT_NAME', 'WORK_CATEGORY', 'SANCTION_AMOUNT', 'EXPENDITURE_AMOUNT', 'PROGRESS_PERCENTAGE', 'UTILIZATION_PCT', 'RISK_SCORE']].copy()
             st.dataframe(
-                display_geo.style.format({
-                    'GEOFENCE_DISTANCE_METERS': '{:.1f} m',
-                    'LATITUDE': '{:.6f}',
-                    'LONGITUDE': '{:.6f}',
-                    'EXIF_LATITUDE': '{:.6f}',
-                    'EXIF_LONGITUDE': '{:.6f}'
+                display_sc.style.format({
+                    'SANCTION_AMOUNT': lambda x: format_inr(x),
+                    'EXPENDITURE_AMOUNT': lambda x: format_inr(x),
+                    'PROGRESS_PERCENTAGE': '{:.1f}%',
+                    'UTILIZATION_PCT': '{:.1f}%',
+                    'RISK_SCORE': '{:.1f}'
                 }),
                 use_container_width=True
             )
         else:
-            st.success("All photo EXIF coordinates fall within official geofence boundaries.")
+            st.success("Physical milestone progress aligns with financial expenditure burn rates across active selection.")
 
     # SUB-TAB 3: PREDICTIVE EARLY WARNINGS
     with sub_t3:
