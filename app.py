@@ -954,6 +954,7 @@ with tab_data_sources:
 # ==========================================
 with tab_advanced:
     st.markdown("### Advanced Forensic Analytics & Policy Audit")
+    render_active_filter_banner()
     
     sub_t1, sub_t2, sub_t3, sub_t4, sub_t5 = st.tabs([
         "Cross-Scheme Audit",
@@ -1089,8 +1090,9 @@ with tab_advanced:
         filtered_work_ids = set(filtered_df['WORK_ID'].unique()) if not filtered_df.empty else set()
         
         if duplicates_matrix is not None and not duplicates_matrix.empty and filtered_work_ids:
+            # STRICT FILTER ENFORCEMENT: Both Work A AND Work B must belong to filtered_work_ids
             filtered_dup = duplicates_matrix[
-                duplicates_matrix['Work A ID'].isin(filtered_work_ids) | 
+                duplicates_matrix['Work A ID'].isin(filtered_work_ids) & 
                 duplicates_matrix['Work B ID'].isin(filtered_work_ids)
             ].copy()
             
