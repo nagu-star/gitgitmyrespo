@@ -1002,6 +1002,12 @@ with tab_advanced:
         Cross-references embedded EXIF GPS coordinates from submitted progress photos against official sanctioned location coordinates (>100m threshold) and evaluates milestone burn-rate velocity.
         """)
         
+        st.markdown("""
+        <div style="background: #1e293b; border: 1px solid #334155; border-left: 4px solid #f59e0b; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.83rem; color: #cbd5e1;">
+            🔒 <strong>Data Architecture Note:</strong> Public MoSPI REST APIs do not publicly serve raw binary photo attachments. Photo EXIF GPS coordinates and perceptual hashes are evaluated using simulated metadata sandbox streams. Direct binary photo verification requires authenticated e-SAKSHI portal OAuth credentials.
+        </div>
+        """, unsafe_allow_html=True)
+        
         if 'IS_GEO_MISMATCH' in filtered_df.columns:
             geo_mismatches = filtered_df[filtered_df['IS_GEO_MISMATCH'] == True]
         else:
