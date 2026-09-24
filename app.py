@@ -36,12 +36,12 @@ from src.officer_review import load_officer_reviews, save_officer_review, merge_
 
 # Page configuration
 st.set_page_config(
-    page_title="AI Fraud, Anomaly & Duplicate Work Detection System | MPLADS",
+    page_title="MPLADS Risk Intelligence & Duplicate Work Detection System",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Enterprise CSS Styling (Clean, Minimal, Government Tech Aesthetics)
+# Custom Enterprise CSS Styling (Clean, Minimal, Modern Professional Analytics)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -73,7 +73,7 @@ st.markdown("""
     }
     
     .app-subtitle {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         color: #94a3b8;
         margin-top: 4px;
         margin-bottom: 12px;
@@ -102,14 +102,15 @@ st.markdown("""
         border-radius: 8px;
         padding: 16px 20px;
         height: 100%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .kpi-title {
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         font-weight: 700;
         color: #94a3b8;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
     }
     .kpi-value {
         font-size: 1.6rem;
@@ -118,12 +119,12 @@ st.markdown("""
         line-height: 1.2;
     }
     .kpi-subtext {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: #64748b;
-        margin-top: 6px;
+        margin-top: 4px;
     }
     
-    /* Banners & Cards */
+    /* Banners & Panels */
     .principle-banner {
         background: rgba(30, 41, 59, 0.7);
         border: 1px solid #334155;
@@ -132,7 +133,7 @@ st.markdown("""
         padding: 14px 18px;
         margin-bottom: 20px;
         color: #e2e8f0;
-        font-size: 0.9rem;
+        font-size: 0.88rem;
     }
     
     .explanation-panel {
@@ -142,11 +143,58 @@ st.markdown("""
         padding: 20px;
         margin-top: 16px;
     }
+
+    /* Risk Score Component Card & Progress Bar */
+    .risk-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .risk-score-display {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #f8fafc;
+        line-height: 1;
+    }
+    .risk-bar-container {
+        background: #0f172a;
+        border-radius: 4px;
+        height: 10px;
+        width: 100%;
+        margin-top: 10px;
+        margin-bottom: 8px;
+        overflow: hidden;
+        border: 1px solid #334155;
+    }
+    .risk-bar-fill-critical { background: #ef4444; height: 100%; }
+    .risk-bar-fill-high { background: #f97316; height: 100%; }
+    .risk-bar-fill-medium { background: #f59e0b; height: 100%; }
+    .risk-bar-fill-low { background: #10b981; height: 100%; }
     
+    /* Risk Reason Chips / Pills */
+    .reason-chip {
+        display: inline-block;
+        background: #0f172a;
+        color: #e2e8f0;
+        border: 1px solid #334155;
+        border-left: 3.5px solid #f97316;
+        border-radius: 6px;
+        padding: 7px 12px;
+        font-size: 0.84rem;
+        font-weight: 500;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+    .reason-chip-critical {
+        border-left-color: #ef4444;
+    }
+
     /* Risk Badges */
     .badge {
         display: inline-block;
-        padding: 3px 8px;
+        padding: 4px 10px;
         border-radius: 4px;
         font-size: 0.75rem;
         font-weight: 700;
@@ -158,6 +206,19 @@ st.markdown("""
     .badge-medium { background: #78350f; color: #fde047; border: 1px solid #92400e; }
     .badge-low { background: #064e3b; color: #6ee7b7; border: 1px solid #065f46; }
     .badge-info { background: #0c4a6e; color: #7dd3fc; border: 1px solid #075985; }
+
+    /* Duplicate Record Match Cards */
+    .dup-card {
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-left: 4px solid #38bdf8;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 14px;
+    }
+    .dup-card-confirmed {
+        border-left-color: #ef4444;
+    }
 
     /* Custom Streamlit Tab Styling */
     .stTabs [data-baseweb="tab-list"] {
@@ -290,18 +351,17 @@ st.markdown("""
 <div class="app-header">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
         <div>
-            <h1 class="app-title">AI-Powered Fraud, Anomaly & Duplicate Work Detection System</h1>
-            <div class="app-subtitle">Ministry of Statistics and Programme Implementation (MoSPI) &mdash; Forensic Analytics & Audit Copilot</div>
+            <h1 class="app-title">MPLADS Risk Intelligence & Duplicate Work Detection System</h1>
+            <div class="app-subtitle">Ministry of Statistics and Programme Implementation (MoSPI) &mdash; Forensic Analytics Platform</div>
             <div style="margin-top: 8px;">
-                <span class="gov-tag" style="border-color: #38bdf8; color: #38bdf8; font-weight: 700;">🔍 Duplicate Work Detection (TF-IDF)</span>
-                <span class="gov-tag" style="border-color: #f59e0b; color: #fde047; font-weight: 700;">⚠️ Anomaly Detection (Isolation Forest)</span>
-                <span class="gov-tag" style="border-color: #ef4444; color: #fca5a5; font-weight: 700;">🛡️ Fraud & Risk Scoring</span>
-                <span class="gov-tag">🤖 XAI Diagnostics</span>
-                <span class="gov-tag">👮 Officer Verification</span>
+                <span class="gov-tag" style="border-color: #ef4444; color: #fca5a5; font-weight: 700;">1. Risk Scoring (0-100)</span>
+                <span class="gov-tag" style="border-color: #f97316; color: #fdba74; font-weight: 700;">2. Risk Reasons Diagnosis</span>
+                <span class="gov-tag" style="border-color: #38bdf8; color: #38bdf8; font-weight: 700;">3. Duplicate & Cross-Scheme Detection</span>
+                <span class="gov-tag">Officer Audit Workflow</span>
             </div>
         </div>
         <div style="background: #1e293b; padding: 12px 16px; border-radius: 6px; border: 1px solid #334155; min-width: 220px;">
-            <div style="font-size: 0.72rem; color: #94a3b8; font-weight: 700; text-transform: uppercase;">System Data Status</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; font-weight: 700; text-transform: uppercase;">System Data Integration</div>
             <div style="font-size: 0.88rem; font-weight: 700; color: #38bdf8; margin-top: 2px;">mplads.mospi.gov.in REST API</div>
             <div style="font-size: 0.75rem; color: #10b981; margin-top: 4px; font-weight: 600;">Connected (Public Aggregates)</div>
         </div>
@@ -409,80 +469,117 @@ def render_active_filter_banner():
     scope_str = " | ".join(active_filters) if active_filters else "All Data Scope (No Active Filters)"
     st.markdown(f"""
     <div style="font-size: 0.8rem; color: #38bdf8; background: #0f172a; padding: 6px 14px; border-radius: 6px; border: 1px solid #1e293b; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-        <div>🔍 <strong>Active Selection Scope:</strong> {scope_str}</div>
-        <div style="color: #94a3b8; font-size: 0.78rem;"><strong>{len(filtered_df):,}</strong> works matched</div>
+        <div><strong>Active Selection Scope:</strong> {scope_str}</div>
+        <div style="color: #94a3b8; font-size: 0.78rem;"><strong>{len(filtered_df):,}</strong> records matched</div>
     </div>
     """, unsafe_allow_html=True)
 
 # Compute Filtered KPIs
 kpis = compute_kpis(filtered_df)
 
-# Navigation Tabs Structure
-tab_overview, tab_risk_mon, tab_work_detail, tab_officer_rev, tab_data_sources, tab_advanced = st.tabs([
-    "Overview",
-    "Risk Monitoring",
-    "Work Inspection",
-    "Officer Verification",
-    "Data Architecture",
-    "Advanced Analytics"
+# Calculate total duplicate count (intra-district + cross-scheme)
+filtered_work_ids = set(filtered_df['WORK_ID'].unique()) if not filtered_df.empty else set()
+intra_dup_count = len(duplicates_matrix[
+    duplicates_matrix['Work A ID'].isin(filtered_work_ids) & 
+    duplicates_matrix['Work B ID'].isin(filtered_work_ids)
+]) if (duplicates_matrix is not None and not duplicates_matrix.empty and filtered_work_ids) else 0
+
+cs_dup_count = int(filtered_df['IS_CROSS_SCHEME_DUPLICATE'].sum()) if 'IS_CROSS_SCHEME_DUPLICATE' in filtered_df.columns else 0
+total_duplicate_flags = intra_dup_count + cs_dup_count
+
+# Reorganized Navigation Tabs Structure (Highlights Core Features)
+tab_overview, tab_risk_mon, tab_dup_detect, tab_work_detail, tab_officer_rev, tab_advanced = st.tabs([
+    "Overview Dashboard",
+    "Risk Score & Reasons",
+    "Duplicate & Cross-Scheme Detection",
+    "Work Record Inspector",
+    "Officer Verification Portal",
+    "Architecture & Analytics"
 ])
 
 # ==========================================
-# TAB 1: OVERVIEW DASHBOARD
+# TAB 1: OVERVIEW DASHBOARD (Executive Risk Flow)
 # ==========================================
 with tab_overview:
-    st.markdown(f"### Monitoring Overview &mdash; {user_role} View")
+    st.markdown(f"### Risk & Intelligence Overview &mdash; {user_role} Scope")
     render_active_filter_banner()
     
     st.markdown("""
     <div class="principle-banner">
-        <strong>Governance Principle:</strong> AI-based risk models assist in identifying outliers and parameter variances. Official verification and administrative decisions remain with designated authority officers.
+        <strong>Governance Principle:</strong> Automated risk scores and detection flags assist in identifying financial and administrative outliers. Official verification and audit decisions remain with designated authority officers.
     </div>
     """, unsafe_allow_html=True)
     
     if filtered_df.empty:
-        render_empty_state("No Works Found", "No work records match the selected filter parameters. Adjust your selections in the sidebar control panel.")
+        render_empty_state("No Records Found", "No work records match the selected filter parameters. Adjust your selections in the sidebar control panel.")
     else:
-        # Metrics Section 1: Work & Anomaly Totals
-        c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Monitored Works", f"{kpis['total_works']:,}")
-        c2.metric("High & Critical Risk Works", f"{kpis['high_and_critical_risk']:,}")
-        c3.metric("Delayed Works", f"{kpis['delayed_works']:,}")
-        c4.metric("Anomalous Works", f"{kpis['anomalous_works']:,}")
+        # PROMINENT SUMMARY CARDS (Top 5 Essential Metrics)
+        c1, c2, c3, c4, c5 = st.columns(5)
+        
+        with c1:
+            st.markdown(f"""
+            <div class="kpi-container">
+                <div class="kpi-title">Total Records</div>
+                <div class="kpi-value">{kpis['total_works']:,}</div>
+                <div class="kpi-subtext">Monitored Public Works</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        with c2:
+            st.markdown(f"""
+            <div class="kpi-container" style="border-left: 3.5px solid #f97316;">
+                <div class="kpi-title" style="color: #fdba74;">High-Risk Records</div>
+                <div class="kpi-value" style="color: #fdba74;">{kpis['high_risk_works']:,}</div>
+                <div class="kpi-subtext">Score 55.0 &ndash; 74.9</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        with c3:
+            st.markdown(f"""
+            <div class="kpi-container" style="border-left: 3.5px solid #ef4444;">
+                <div class="kpi-title" style="color: #fca5a5;">Critical-Risk Records</div>
+                <div class="kpi-value" style="color: #fca5a5;">{kpis['critical_risk_works']:,}</div>
+                <div class="kpi-subtext">Score &ge; 75.0 (Action Required)</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        # Metrics Section 2: Financial Utilization
-        c5, c6, c7, c8 = st.columns(4)
-        c5.metric("Total Sanctioned", format_inr(kpis['total_sanctioned']))
-        c6.metric("Total Expenditure", format_inr(kpis['total_expenditure']), delta=f"{kpis['utilization_rate']}% Utilization")
-        c7.metric("Remaining Unspent", format_inr(kpis['remaining_amount']))
-        c8.metric("Medium / Low Risk Works", f"{kpis['medium_risk_works']:,} / {kpis['low_risk_works']:,}")
+        with c4:
+            st.markdown(f"""
+            <div class="kpi-container" style="border-left: 3.5px solid #38bdf8;">
+                <div class="kpi-title" style="color: #38bdf8;">Potential Duplicates</div>
+                <div class="kpi-value" style="color: #38bdf8;">{total_duplicate_flags:,}</div>
+                <div class="kpi-subtext">Intra-District & Cross-Scheme</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        # Metrics Section 3: Officer Verification Pipeline
-        cr1, cr2, cr3, cr4 = st.columns(4)
-        cr1.metric("Pending Review Queue", f"{kpis['pending_review_works']:,}")
-        cr2.metric("Verified Cases", f"{kpis['verified_works']:,}")
-        cr3.metric("Needs Investigation", f"{kpis['needs_investigation_works']:,}")
-        cr4.metric("False Positives Marked", f"{kpis['false_positive_works']:,}")
+        with c5:
+            st.markdown(f"""
+            <div class="kpi-container" style="border-left: 3.5px solid #f59e0b;">
+                <div class="kpi-title" style="color: #fde047;">Detected Anomalies</div>
+                <div class="kpi-value" style="color: #fde047;">{kpis['anomalous_works']:,}</div>
+                <div class="kpi-subtext">Multivariate Outlier Flags</div>
+            </div>
+            """, unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Charts Section 1
+        # Overview Section 1: Financial & Severity Charts
         col_chart1, col_chart2 = st.columns(2)
         
         with col_chart1:
-            st.markdown("##### State Financial Sanction vs Expenditure")
+            st.markdown("##### State Financial Allocation vs Expenditure")
             state_agg = aggregate_by_state(filtered_df).head(12)
             if not state_agg.empty:
                 fig_state = go.Figure()
                 fig_state.add_trace(go.Bar(x=state_agg['STATE_NAME'], y=state_agg['Total_Sanctioned']/1e7, name='Sanctioned (Cr)', marker_color='#2563eb'))
                 fig_state.add_trace(go.Bar(x=state_agg['STATE_NAME'], y=state_agg['Total_Expenditure']/1e7, name='Expenditure (Cr)', marker_color='#10b981'))
                 fig_state.update_layout(barmode='group', xaxis_tickangle=-45, yaxis_title="Amount (₹ Crore)")
-                st.plotly_chart(style_plotly_chart(fig_state, 360), use_container_width=True)
+                st.plotly_chart(style_plotly_chart(fig_state, 320), use_container_width=True)
             else:
                 render_empty_state("No Data", "Insufficient data for state financial comparison.")
 
         with col_chart2:
-            st.markdown("##### Risk Level Distribution")
+            st.markdown("##### Risk Level Severity Distribution")
             if 'RISK_LEVEL' in filtered_df.columns and not filtered_df.empty:
                 risk_counts = filtered_df['RISK_LEVEL'].value_counts().reset_index()
                 risk_counts.columns = ['Risk Level', 'Count']
@@ -491,68 +588,75 @@ with tab_overview:
                     color='Risk Level', color_discrete_map=PLOTLY_COLOR_DISCRETE,
                     hole=0.45
                 )
-                st.plotly_chart(style_plotly_chart(fig_risk, 360), use_container_width=True)
+                st.plotly_chart(style_plotly_chart(fig_risk, 320), use_container_width=True)
             else:
                 render_empty_state("No Data", "No risk level classification available.")
 
-        # Charts Section 2
-        col_chart3, col_chart4 = st.columns(2)
-        with col_chart3:
-            st.markdown("##### Financial Allocation by Work Category")
-            cat_agg = aggregate_by_category(filtered_df)
-            if not cat_agg.empty:
-                fig_cat = px.bar(
-                    cat_agg, x='Total_Sanctioned', y='WORK_CATEGORY', 
-                    orientation='h', color='Utilization_Pct', color_continuous_scale='Blues',
-                    labels={'Total_Sanctioned': 'Sanctioned Amount (₹)', 'WORK_CATEGORY': 'Category'}
-                )
-                st.plotly_chart(style_plotly_chart(fig_cat, 340), use_container_width=True)
+        # Overview Section 2: Primary Risk Flag Reasons Distribution
+        st.markdown("##### Primary Administrative Risk Reasons across Active Selection")
+        driver_counts = {
+            'Budget Overrun': int((filtered_df['EXPENDITURE_AMOUNT'] > filtered_df['SANCTION_AMOUNT']).sum()),
+            'High Spending vs Low Progress': int(((filtered_df['UTILIZATION_PCT'] > 80.0) & (filtered_df['PROGRESS_PERCENTAGE'] < 50.0)).sum()),
+            'Unusual Spending Pattern': int(filtered_df['IS_ANOMALY'].sum()) if 'IS_ANOMALY' in filtered_df.columns else 0,
+            'Possible Duplicate Project': int(filtered_df['IS_DUPLICATE_FLAG'].sum()) if 'IS_DUPLICATE_FLAG' in filtered_df.columns else 0,
+            'Double-Funding Alert (Cross-Scheme)': int(filtered_df['IS_CROSS_SCHEME_DUPLICATE'].sum()) if 'IS_CROSS_SCHEME_DUPLICATE' in filtered_df.columns else 0,
+            'Potential Tender Splitting': int(filtered_df['IS_SPLIT_TENDER'].sum()) if 'IS_SPLIT_TENDER' in filtered_df.columns else 0,
+            'Funds Disbursed vs Work Stalled': int(filtered_df['IS_STAGNANT_SCURVE'].sum()) if 'IS_STAGNANT_SCURVE' in filtered_df.columns else 0,
+        }
+        drivers_df = pd.DataFrame(list(driver_counts.items()), columns=['Risk Flag Reason', 'Count']).sort_values(by='Count', ascending=True)
+        fig_drivers = px.bar(
+            drivers_df, x='Count', y='Risk Flag Reason', orientation='h',
+            color='Count', color_continuous_scale='Reds',
+            labels={'Count': 'Number of Flagged Works', 'Risk Flag Reason': 'Administrative Risk Reason'}
+        )
+        st.plotly_chart(style_plotly_chart(fig_drivers, 300), use_container_width=True)
 
-        with col_chart4:
-            st.markdown("##### Physical Progress vs Financial Utilization Discrepancy")
-            if not filtered_df.empty:
-                fig_scatter = px.scatter(
-                    filtered_df, x='PROGRESS_PERCENTAGE', y='UTILIZATION_PCT',
-                    color='RISK_LEVEL', size='SANCTION_AMOUNT',
-                    hover_data=['WORK_ID', 'STATE_NAME', 'WORK_CATEGORY'],
-                    labels={'PROGRESS_PERCENTAGE': 'Physical Progress (%)', 'UTILIZATION_PCT': 'Financial Utilization (%)'},
-                    color_discrete_map=PLOTLY_COLOR_DISCRETE
-                )
-                fig_scatter.add_shape(type="line", x0=0, y0=100, x1=100, y1=100, line=dict(color="#ef4444", width=1, dash="dash"))
-                st.plotly_chart(style_plotly_chart(fig_scatter, 340), use_container_width=True)
-
-        # Charts Section 3: Risk Drivers Breakdown
-        st.markdown("##### Primary Risk Score Drivers & Flag Reasons")
-        if not filtered_df.empty:
-            driver_counts = {
-                'Budget Overrun': int((filtered_df['EXPENDITURE_AMOUNT'] > filtered_df['SANCTION_AMOUNT']).sum()),
-                'High Spending vs Low Progress': int(((filtered_df['UTILIZATION_PCT'] > 80.0) & (filtered_df['PROGRESS_PERCENTAGE'] < 50.0)).sum()),
-                'Unusual Spending Pattern': int(filtered_df['IS_ANOMALY'].sum()) if 'IS_ANOMALY' in filtered_df.columns else 0,
-                'Possible Duplicate Project': int(filtered_df['IS_DUPLICATE_FLAG'].sum()) if 'IS_DUPLICATE_FLAG' in filtered_df.columns else 0,
-                'Double-Funding Alert': int(filtered_df['IS_CROSS_SCHEME_DUPLICATE'].sum()) if 'IS_CROSS_SCHEME_DUPLICATE' in filtered_df.columns else 0,
-                'Potential Tender Splitting': int(filtered_df['IS_SPLIT_TENDER'].sum()) if 'IS_SPLIT_TENDER' in filtered_df.columns else 0,
-                'Funds Disbursed vs Work Stalled': int(filtered_df['IS_STAGNANT_SCURVE'].sum()) if 'IS_STAGNANT_SCURVE' in filtered_df.columns else 0,
-            }
-            drivers_df = pd.DataFrame(list(driver_counts.items()), columns=['Risk Reason / Indicator', 'Count']).sort_values(by='Count', ascending=True)
-            fig_drivers = px.bar(
-                drivers_df, x='Count', y='Risk Reason / Indicator', orientation='h',
-                color='Count', color_continuous_scale='Reds',
-                labels={'Count': 'Number of Flagged Works', 'Risk Reason / Indicator': 'Administrative Flag Reason'}
+        st.markdown("---")
+        
+        # High-Risk Priority Watchlist Table
+        st.markdown("##### High & Critical Risk Priority Watchlist")
+        st.markdown("Top priority work records sorted by **Risk Score (Highest First)** requiring administrative audit attention.")
+        
+        high_risk_df = filtered_df[filtered_df['RISK_LEVEL'].isin(['CRITICAL', 'HIGH'])].sort_values(by='RISK_SCORE', ascending=False)
+        if not high_risk_df.empty:
+            display_watchlist = high_risk_df[['WORK_ID', 'STATE_NAME', 'DISTRICT_NAME', 'WORK_CATEGORY', 'SANCTION_AMOUNT', 'EXPENDITURE_AMOUNT', 'PROGRESS_PERCENTAGE', 'RISK_SCORE', 'RISK_LEVEL', 'RISK_FACTORS', 'REVIEW_STATUS']].head(15).rename(columns={
+                'WORK_ID': 'Work ID',
+                'STATE_NAME': 'State',
+                'DISTRICT_NAME': 'District',
+                'WORK_CATEGORY': 'Work Category',
+                'SANCTION_AMOUNT': 'Sanctioned Budget',
+                'EXPENDITURE_AMOUNT': 'Expenditure',
+                'PROGRESS_PERCENTAGE': 'Progress (%)',
+                'RISK_SCORE': 'Risk Score',
+                'RISK_LEVEL': 'Risk Level',
+                'RISK_FACTORS': 'Risk Reasons & Factors',
+                'REVIEW_STATUS': 'Audit Status'
+            })
+            st.dataframe(
+                display_watchlist.style.format({
+                    'Sanctioned Budget': lambda x: format_inr(x),
+                    'Expenditure': lambda x: format_inr(x),
+                    'Progress (%)': '{:.1f}%',
+                    'Risk Score': '{:.1f}'
+                }),
+                use_container_width=True,
+                height=380
             )
-            st.plotly_chart(style_plotly_chart(fig_drivers, 320), use_container_width=True)
+        else:
+            st.success("No high or critical risk records in active selection scope.")
 
 # ==========================================
-# TAB 2: RISK MONITORING MATRIX
+# TAB 2: RISK SCORE & REASONS MONITORING
 # ==========================================
 with tab_risk_mon:
-    st.markdown("### Risk Monitoring & Anomaly Matrix")
+    st.markdown("### Risk Score & Reason Diagnostic Center")
     render_active_filter_banner()
     st.markdown("""
-    Work items ordered by **Risk Score (Highest First)**. Synthesizes budget variances, progress discrepancies, project duplication risks, policy compliance, and cross-scheme double funding indicators into clear administrative explanations.
+    Displays all monitored public work records ordered by **Risk Score (Highest First)**. Synthesizes budget overrun factors, progress discrepancies, project duplication flags, and policy compliance into clear administrative reasons.
     """)
     
     if filtered_df.empty:
-        render_empty_state("No Works Found", "No work items match the active selection criteria.")
+        render_empty_state("No Records Found", "No work items match the active selection criteria.")
     else:
         risk_mon_df = filtered_df.sort_values(by='RISK_SCORE', ascending=False).copy()
         
@@ -582,19 +686,19 @@ with tab_risk_mon:
             'WORK_ID': 'Work ID',
             'DISTRICT_NAME': 'District',
             'WORK_CATEGORY': 'Work Category',
-            'SANCTION_AMOUNT': 'Sanctioned Amount',
+            'SANCTION_AMOUNT': 'Sanctioned Budget',
             'EXPENDITURE_AMOUNT': 'Expenditure',
             'PROGRESS_PERCENTAGE': 'Progress (%)',
             'DELAY_INFORMATION': 'Delay Info',
             'RISK_SCORE': 'Risk Score (0-100)',
             'RISK_LEVEL': 'Risk Level',
-            'ALL_RISK_REASONS': 'Administrative Risk Reasons',
-            'REVIEW_STATUS': 'Review Status'
+            'ALL_RISK_REASONS': 'Why is this risky? (Administrative Reasons)',
+            'REVIEW_STATUS': 'Audit Status'
         })
 
         st.dataframe(
             display_df.style.format({
-                'Sanctioned Amount': lambda x: format_inr(x),
+                'Sanctioned Budget': lambda x: format_inr(x),
                 'Expenditure': lambda x: format_inr(x),
                 'Progress (%)': '{:.1f}%',
                 'Risk Score (0-100)': '{:.1f}'
@@ -604,11 +708,11 @@ with tab_risk_mon:
         )
 
         st.markdown("---")
-        st.markdown("#### 🔍 Instant Risk Score & Diagnostic Reason Inspector")
-        st.markdown("Select any work item below to view its exact mathematical point breakdown and plain administrative reasons for the assigned risk score.")
+        st.markdown("#### 🔍 Interactive Risk Score & Reason Inspector")
+        st.markdown("Select any work item below to view its exact score formula additions and itemized risk reason chips.")
         
         selected_mon_id = st.selectbox(
-            "Select Work ID for Detailed Risk Reason Breakdown",
+            "Select Work ID for Detailed Inspection",
             risk_mon_df['WORK_ID'].tolist(),
             key="sb_risk_mon_inspector"
         )
@@ -618,171 +722,286 @@ with tab_risk_mon:
             
             c_ins1, c_ins2 = st.columns([1, 1.2])
             with c_ins1:
-                st.markdown(f"##### Risk Profile: Work `{selected_mon_id}`")
-                st.write(f"**Risk Score:** `{mon_diag['risk_score']} / 100` (`{mon_diag['risk_level']}`)")
+                r_sc = mon_diag['risk_score']
+                r_lvl = mon_diag['risk_level']
+                b_cls = "badge-critical" if r_lvl == 'CRITICAL' else ("badge-high" if r_lvl == 'HIGH' else ("badge-medium" if r_lvl == 'MEDIUM' else "badge-low"))
+                bar_cls = "risk-bar-fill-critical" if r_lvl == 'CRITICAL' else ("risk-bar-fill-high" if r_lvl == 'HIGH' else ("risk-bar-fill-medium" if r_lvl == 'MEDIUM' else "risk-bar-fill-low"))
+
+                st.markdown(f"""
+                <div class="risk-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">PROMINENT RISK SCORE</div>
+                            <div class="risk-score-display">{r_sc} <span style="font-size: 1rem; color: #94a3b8;">/ 100</span></div>
+                        </div>
+                        <div>
+                            <span class="badge {b_cls}">{r_lvl} RISK</span>
+                        </div>
+                    </div>
+                    <div class="risk-bar-container">
+                        <div class="{bar_cls}" style="width: {min(100, max(5, r_sc))}%;"></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.write(f"**Work ID:** `{selected_mon_id}`")
                 st.write(f"**Location:** {mon_diag['district']}, {mon_diag['state']}")
                 st.write(f"**MP / Constituency:** {mon_diag['mp_name']} ({mon_diag['constituency']})")
                 st.write(f"**Category:** {mon_diag['category']}")
                 st.write(f"**Sanctioned Budget:** {mon_diag['sanctioned_amount_str']}")
                 st.write(f"**Actual Expenditure:** {mon_diag['expenditure_amount_str']}")
                 st.write(f"**Physical Progress:** {mon_diag['progress_pct_str']}")
-                st.write(f"**Implementation Status:** `{mon_diag['status']}`")
-                st.write(f"**Data Status:** `{mon_diag['data_status_badge']}`")
+                st.write(f"**Status:** `{mon_diag['status']}`")
                 
             with c_ins2:
-                st.markdown("##### Score Point Additions & Administrative Audit Reasons:")
-                st.markdown("**Exact Risk Score Formula Additions:**")
+                st.markdown("##### Why is this record risky?")
+                st.markdown("<div style='margin-bottom: 12px;'>", unsafe_allow_html=True)
+                for r_item in mon_diag['reasons']:
+                    clean_r = r_item.split('. ', 1)[-1] if '. ' in r_item else r_item
+                    c_chip_cls = "reason-chip-critical" if r_lvl in ['HIGH', 'CRITICAL'] else ""
+                    st.markdown(f"<div class='reason-chip {c_chip_cls}'>⚠️ {clean_r}</div>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+
+                st.markdown("---")
+                st.markdown("**Exact Risk Score Formula Point Additions:**")
                 for item in mon_diag['score_breakdown']:
                     st.markdown(f"&bull; **{item['factor']}**: `{item['pts']}`")
-                st.markdown("---")
-                st.markdown("**Administrative Explanations for Officers:**")
-                for r_idx, reason in enumerate(mon_diag['reasons'], 1):
-                    st.markdown(f"**{r_idx}.** {reason}")
                 st.info(f"**Recommended Action:** {mon_diag['recommended_action']}")
 
 # ==========================================
-# TAB 3: WORK INSPECTION & AI DIAGNOSTIC
+# TAB 3: DUPLICATE & CROSS-SCHEME DETECTION
+# ==========================================
+with tab_dup_detect:
+    st.markdown("### Duplicate & Cross-Scheme Detection Center")
+    render_active_filter_banner()
+    st.markdown("""
+    Identifies **confirmed duplicate projects** within MPLADS (text & financial similarity) and **potential cross-scheme double-funding overlaps** with parallel national programs (PMGSY, Jal Jeevan Mission, etc.) based on spatial GIS coordinates.
+    """)
+
+    # Filter duplicate records
+    filtered_work_ids = set(filtered_df['WORK_ID'].unique()) if not filtered_df.empty else set()
+    
+    # 1. Intra-District Duplicates (Confirmed TF-IDF Matches)
+    intra_dups = duplicates_matrix[
+        duplicates_matrix['Work A ID'].isin(filtered_work_ids) & 
+        duplicates_matrix['Work B ID'].isin(filtered_work_ids)
+    ] if (duplicates_matrix is not None and not duplicates_matrix.empty and filtered_work_ids) else pd.DataFrame()
+
+    # 2. Cross-Scheme Overlaps (Potential GIS Double-Funding Matches)
+    cs_dups = filtered_df[filtered_df['IS_CROSS_SCHEME_DUPLICATE'] == True] if 'IS_CROSS_SCHEME_DUPLICATE' in filtered_df.columns else pd.DataFrame()
+
+    # Summary Metrics for Duplicate Detection
+    c_d1, c_d2, c_d3, c_d4 = st.columns(4)
+    c_d1.metric("Confirmed Intra-District Pairs", f"{len(intra_dups):,}")
+    c_d2.metric("Cross-Scheme Spatial Overlaps", f"{len(cs_dups):,}")
+    c_d3.metric("Total Duplicate Risk Flags", f"{len(intra_dups) + len(cs_dups):,}")
+    total_val_at_risk = (cs_dups['SANCTION_AMOUNT'].sum() if not cs_dups.empty else 0) + (intra_dups['Sanction Amount A'].sum() if not intra_dups.empty else 0)
+    c_d4.metric("Total Value at Risk", format_inr(total_val_at_risk))
+
+    st.markdown("---")
+
+    dup_view_mode = st.radio(
+        "Duplicate Category Filter",
+        ["All Duplicate Matches", "Confirmed Intra-District Duplicates", "Potential Cross-Scheme Overlaps"],
+        horizontal=True
+    )
+
+    if dup_view_mode in ["All Duplicate Matches", "Confirmed Intra-District Duplicates"]:
+        st.markdown("#### Confirmed Intra-District Duplicate Work Pairs")
+        if not intra_dups.empty:
+            for _, d_row in intra_dups.head(8).iterrows():
+                sim_pct = round(d_row.get('Cosine Similarity', 0.85) * 100, 1)
+                st.markdown(f"""
+                <div class="dup-card dup-card-confirmed">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                            <span class="badge badge-critical">CONFIRMED DUPLICATE MATCH ({sim_pct}% Similarity)</span>
+                            <span style="font-size: 0.85rem; color: #94a3b8; margin-left: 10px;">District: {d_row.get('District', 'N/A')}</span>
+                        </div>
+                        <span style="font-size: 0.9rem; font-weight: 700; color: #ef4444;">Value: {format_inr(d_row.get('Sanction Amount A', 0))}</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; font-size: 0.85rem;">
+                        <div style="background: #1e293b; padding: 10px 12px; border-radius: 6px; border: 1px solid #334155;">
+                            <div style="color: #38bdf8; font-weight: 700;">Record A ID: {d_row['Work A ID']}</div>
+                            <div style="color: #f8fafc; margin-top: 4px;">{d_row.get('Work Description A', 'N/A')}</div>
+                            <div style="color: #94a3b8; margin-top: 4px;">Sanctioned Budget: {format_inr(d_row.get('Sanction Amount A', 0))}</div>
+                        </div>
+                        <div style="background: #1e293b; padding: 10px 12px; border-radius: 6px; border: 1px solid #334155;">
+                            <div style="color: #38bdf8; font-weight: 700;">Record B ID: {d_row['Work B ID']}</div>
+                            <div style="color: #f8fafc; margin-top: 4px;">{d_row.get('Work Description B', 'N/A')}</div>
+                            <div style="color: #94a3b8; margin-top: 4px;">Sanctioned Budget: {format_inr(d_row.get('Sanction Amount B', 0))}</div>
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            st.dataframe(
+                intra_dups.style.format({
+                    'Sanction Amount A': lambda x: format_inr(x),
+                    'Sanction Amount B': lambda x: format_inr(x)
+                }),
+                use_container_width=True
+            )
+        else:
+            st.info("No confirmed intra-district duplicate work pairs in active selection.")
+
+    if dup_view_mode in ["All Duplicate Matches", "Potential Cross-Scheme Overlaps"]:
+        st.markdown("#### Potential Cross-Scheme Double-Funding Overlaps")
+        if not cs_dups.empty:
+            for _, cs_row in cs_dups.head(8).iterrows():
+                dist_m = cs_row.get('CROSS_SCHEME_DISTANCE_METERS', 0.0)
+                matched_scheme = cs_row.get('CROSS_SCHEME_MATCH_NAME', 'Parallel Scheme')
+                matched_title = cs_row.get('CROSS_SCHEME_MATCH_TITLE', 'Parallel Asset Construction')
+                st.markdown(f"""
+                <div class="dup-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                            <span class="badge badge-high">POTENTIAL DOUBLE-FUNDING OVERLAP ({dist_m}m Spatial Proximity)</span>
+                            <span style="font-size: 0.85rem; color: #94a3b8; margin-left: 10px;">{cs_row.get('DISTRICT_NAME')}, {cs_row.get('STATE_NAME')}</span>
+                        </div>
+                        <span style="font-size: 0.9rem; font-weight: 700; color: #fdba74;">Sanctioned: {format_inr(cs_row.get('SANCTION_AMOUNT', 0))}</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; font-size: 0.85rem;">
+                        <div style="background: #1e293b; padding: 10px 12px; border-radius: 6px; border: 1px solid #334155;">
+                            <div style="color: #38bdf8; font-weight: 700;">MPLADS Record ID: {cs_row['WORK_ID']}</div>
+                            <div style="color: #f8fafc; margin-top: 4px;">{cs_row.get('WORK_DESCRIPTION', 'N/A')}</div>
+                            <div style="color: #94a3b8; margin-top: 4px;">Category: {cs_row.get('WORK_CATEGORY')}</div>
+                        </div>
+                        <div style="background: #1e293b; padding: 10px 12px; border-radius: 6px; border: 1px solid #334155;">
+                            <div style="color: #a78bfa; font-weight: 700;">Matched Parallel Program: {matched_scheme}</div>
+                            <div style="color: #f8fafc; margin-top: 4px;">{matched_title}</div>
+                            <div style="color: #94a3b8; margin-top: 4px;">Spatial Distance: {dist_m} meters away</div>
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.dataframe(
+                cs_dups[['WORK_ID', 'STATE_NAME', 'DISTRICT_NAME', 'WORK_CATEGORY', 'SANCTION_AMOUNT', 'CROSS_SCHEME_MATCH_NAME', 'CROSS_SCHEME_DISTANCE_METERS', 'CROSS_SCHEME_MATCH_TITLE', 'RISK_SCORE']].style.format({
+                    'SANCTION_AMOUNT': lambda x: format_inr(x),
+                    'CROSS_SCHEME_DISTANCE_METERS': '{:.1f} m',
+                    'RISK_SCORE': '{:.1f}'
+                }),
+                use_container_width=True
+            )
+        else:
+            st.info("No cross-scheme spatial overlaps detected in active selection.")
+
+# ==========================================
+# TAB 4: WORK RECORD INSPECTOR (Strict Hierarchy)
 # ==========================================
 with tab_work_detail:
-    st.markdown("### Itemized Work Inspection & Administrative Diagnosis")
+    st.markdown("### Itemized Work Record Inspection")
     render_active_filter_banner()
     
     work_id_options = filtered_df['WORK_ID'].tolist() if not filtered_df.empty else []
     if work_id_options:
-        selected_work_id = st.selectbox("Select Work ID for Inspection", work_id_options)
+        selected_work_id = st.selectbox("Select Target Record for Detailed Case Inspection", work_id_options)
         work_row = filtered_df[filtered_df['WORK_ID'] == selected_work_id].iloc[0]
-        
         explanation = generate_work_explanation(work_row)
         
+        # 1. RISK SCORE & 2. RISK LEVEL (Prominent Top Card & Bar)
+        r_score = explanation['risk_score']
+        r_level = explanation['risk_level']
+        badge_cls = "badge-critical" if r_level == 'CRITICAL' else ("badge-high" if r_level == 'HIGH' else ("badge-medium" if r_level == 'MEDIUM' else "badge-low"))
+        bar_cls = "risk-bar-fill-critical" if r_level == 'CRITICAL' else ("risk-bar-fill-high" if r_level == 'HIGH' else ("risk-bar-fill-medium" if r_level == 'MEDIUM' else "risk-bar-fill-low"))
+
         st.markdown(f"""
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <div>
-                <span style="font-weight: 700; color: #f8fafc; font-size: 1.05rem;">Inspection Target: {explanation['work_id']}</span>
-                <span style="margin-left: 12px; color: #94a3b8; font-size: 0.88rem;">{explanation['category']} &bull; {explanation['state']}, {explanation['district']}</span>
+        <div class="risk-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">1. COMPOSITE RISK SCORE</div>
+                    <div class="risk-score-display">{r_score} <span style="font-size: 1rem; color: #94a3b8;">/ 100</span></div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; text-align: right; margin-bottom: 4px;">2. RISK LEVEL SEVERITY</div>
+                    <span class="badge {badge_cls}" style="font-size: 0.95rem; padding: 6px 14px;">{r_level} RISK</span>
+                </div>
             </div>
-            <div>
-                <span class="badge badge-info">Data Access: {explanation['data_status_badge']}</span>
+            <div class="risk-bar-container">
+                <div class="{bar_cls}" style="width: {min(100, max(5, r_score))}%;"></div>
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        # 3. RISK REASONS ("Why is this risky?" Clean Chips Section)
+        st.markdown("#### 3. Why is this record risky? (Risk Reasons)")
         
-        col_inf1, col_inf2 = st.columns([1, 1])
-        
-        with col_inf1:
-            st.markdown("#### 1. Work Record Overview")
-            st.write(f"**Work ID:** `{explanation['work_id']}`")
+        st.markdown("<div style='margin-bottom: 12px;'>", unsafe_allow_html=True)
+        for reason_str in explanation['reasons']:
+            clean_reason = reason_str.split('. ', 1)[-1] if '. ' in reason_str else reason_str
+            chip_class = "reason-chip-critical" if r_level in ['HIGH', 'CRITICAL'] else ""
+            st.markdown(f"<div class='reason-chip {chip_class}'>⚠️ {clean_reason}</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.info(f"**Recommended Action for Officers:** {explanation['recommended_action']}")
+
+        # 4. DUPLICATE DETECTION / RELATED RECORDS
+        st.markdown("#### 4. Duplicate Detection & Related Records")
+        is_dup_flag = work_row.get('IS_DUPLICATE_FLAG', False)
+        is_cs_flag = work_row.get('IS_CROSS_SCHEME_DUPLICATE', False)
+
+        if is_dup_flag or is_cs_flag:
+            if is_cs_flag:
+                cs_name = work_row.get('CROSS_SCHEME_MATCH_NAME', 'Parallel Scheme')
+                dist_m = work_row.get('CROSS_SCHEME_DISTANCE_METERS', 0.0)
+                cs_title = work_row.get('CROSS_SCHEME_MATCH_TITLE', 'Parallel Asset Construction')
+                st.markdown(f"""
+                <div class="dup-card">
+                    <div style="color: #fdba74; font-weight: 700; font-size: 0.9rem;">⚠️ Potential Cross-Scheme Double-Funding Overlap Flagged ({dist_m}m Distance)</div>
+                    <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 6px;">
+                        Matched Parallel Program: <strong>{cs_name}</strong> &bull; Asset Title: <em>"{cs_title}"</em>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            if is_dup_flag:
+                st.markdown(f"""
+                <div class="dup-card dup-card-confirmed">
+                    <div style="color: #fca5a5; font-weight: 700; font-size: 0.9rem;">⚠️ Confirmed Intra-District Duplicate Similarity Flagged</div>
+                    <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 6px;">
+                        High text and financial similarity matched with another registered project in {explanation['district']} district.
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+        else:
+            st.success("✓ No duplicate project matches or cross-scheme spatial overlaps detected for this record.")
+
+        # 5. SUPPORTING DETAILS & METADATA
+        st.markdown("#### 5. Supporting Record Details & Disbursement Schedule")
+        col_sd1, col_sd2 = st.columns(2)
+        with col_sd1:
+            st.write(f"**Work Record ID:** `{explanation['work_id']}`")
             st.write(f"**Member of Parliament (MP):** {explanation['mp_name']}")
             st.write(f"**Constituency:** {explanation['constituency']}")
             st.write(f"**State / District:** {explanation['state']} / {explanation['district']}")
             st.write(f"**Work Category:** {explanation['category']}")
             st.write(f"**Work Scope:** {work_row.get('WORK_DESCRIPTION', 'N/A')}")
-            st.markdown("---")
-            st.write(f"**Recommended Amount:** {explanation['recommended_amount_str']}")
-            st.write(f"**Sanctioned Amount:** {explanation['sanctioned_amount_str']}")
-            st.write(f"**Expenditure Amount:** {explanation['expenditure_amount_str']}")
+        with col_sd2:
+            st.write(f"**Sanctioned Budget:** {explanation['sanctioned_amount_str']}")
+            st.write(f"**Actual Expenditure:** {explanation['expenditure_amount_str']}")
             st.write(f"**Physical Progress:** {explanation['progress_pct_str']}")
-            st.write(f"**Current Status:** `{explanation['status']}`")
+            st.write(f"**Work Status:** `{explanation['status']}`")
             st.write(f"**Delay Assessment:** {explanation['delay_info']}")
-
-        with col_inf2:
-            st.markdown("#### 2. Risk Evaluation & Administrative Diagnosis")
-            
-            badge_class = "badge-critical" if explanation['risk_level'] == 'CRITICAL' else ("badge-high" if explanation['risk_level'] == 'HIGH' else ("badge-medium" if explanation['risk_level'] == 'MEDIUM' else "badge-low"))
-            
-            st.markdown(f"""
-            <div class="explanation-panel">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-                    <span style="font-size:1.15rem; font-weight:800; color:#f8fafc;">Composite Risk Score: {explanation['risk_score']}/100</span>
-                    <span class="badge {badge_class}">{explanation['risk_level']} RISK</span>
-                </div>
-                <div style="color:#38bdf8; font-size:0.85rem; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Financial & Administrative Risk Factors (+ Points):</div>
-            """, unsafe_allow_html=True)
-
-            for b_item in explanation['score_breakdown']:
-                st.markdown(f"<div style='color:#94a3b8; font-size:0.82rem; margin-bottom:4px;'>&bull; <strong style='color:#e2e8f0;'>{b_item['factor']}</strong> ({b_item['pts']})</div>", unsafe_allow_html=True)
-                
-            st.markdown("""
-                <hr style="border-color:#334155; margin: 12px 0 10px 0;">
-                <div style="color:#38bdf8; font-size:0.85rem; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Administrative Audit Explanations:</div>
-            """, unsafe_allow_html=True)
-
-            for reason in explanation['reasons']:
-                st.markdown(f"<div style='color:#e2e8f0; font-size:0.9rem; margin-bottom:6px;'>&bull; {reason}</div>", unsafe_allow_html=True)
-
-                
-            st.markdown(f"""
-                <hr style="border-color:#334155; margin: 14px 0 10px 0;">
-                <div style="color:#fb923c; font-size:0.85rem;"><strong>Recommended Action:</strong> {explanation['recommended_action']}</div>
-                <div style="color:#94a3b8; font-size:0.8rem; margin-top:4px;">{explanation['responsible_ai_notice']}</div>
-            </div>
-            """, unsafe_allow_html=True)
+            st.write(f"**Data Completeness:** `{explanation['data_status_badge']}`")
 
         st.markdown("---")
-        st.markdown("#### 3. Administrative Verification Action")
-        
-        curr_status = work_row.get('REVIEW_STATUS', 'Pending Review')
-        curr_remark = work_row.get('OFFICER_REMARK', '')
-        
-        col_ov1, col_ov2 = st.columns([1, 2])
-        with col_ov1:
-            new_status = st.radio(
-                "Verification Determination",
-                ["Pending Review", "Verified", "Needs Investigation", "False Positive"],
-                index=["Pending Review", "Verified", "Needs Investigation", "False Positive"].index(curr_status) if curr_status in ["Pending Review", "Verified", "Needs Investigation", "False Positive"] else 0,
-                key=f"radio_wd_{selected_work_id}"
-            )
-        with col_ov2:
-            new_remark = st.text_area(
-                "Officer Remarks & Inspection Log",
-                value=curr_remark,
-                placeholder="Enter physical site audit observations, voucher verification notes, or administrative justification...",
-                key=f"remark_wd_{selected_work_id}"
-            )
-            if st.button("Save Verification Decision", key=f"btn_wd_{selected_work_id}", type="primary"):
-                save_officer_review(selected_work_id, new_status, new_remark, user_role)
-                st.success(f"Verification decision saved for Work ID '{selected_work_id}'. Status set to '{new_status}'.")
-                st.rerun()
-
-        st.markdown("---")
-        st.markdown("#### 4. Milestone & Disbursement Schedule")
-        
+        st.markdown("##### Milestone Disbursement Schedule")
         sanc = float(work_row['SANCTION_AMOUNT']) if pd.notna(work_row.get('SANCTION_AMOUNT')) else 0.0
         prog = float(work_row['PROGRESS_PERCENTAGE']) if pd.notna(work_row.get('PROGRESS_PERCENTAGE')) else 0.0
         sanc_dt = str(work_row.get('SANCTION_DATE', 'N/A'))[:10]
         comp_dt = str(work_row.get('COMPLETION_DATE', 'N/A'))[:10]
         
         tranches = [
-            {
-                'Tranche': 'Tranche 1 (Commencement)',
-                'Milestone Benchmark': 'Administrative Sanction & Commencement',
-                'Share': '20%',
-                'Disbursed Amount': format_inr(sanc * 0.20),
-                'Date': sanc_dt,
-                'Status': 'Released'
-            },
-            {
-                'Tranche': 'Tranche 2 (Interim)',
-                'Milestone Benchmark': '50% Physical Completion Benchmark',
-                'Share': '50%',
-                'Disbursed Amount': format_inr(sanc * 0.50),
-                'Date': 'Disbursed' if prog >= 50 else 'Pending Benchmark',
-                'Status': 'Released' if prog >= 50 else 'Held Pending Progress'
-            },
-            {
-                'Tranche': 'Tranche 3 (Final Release)',
-                'Milestone Benchmark': 'Final Asset Completion & Inspection',
-                'Share': '30%',
-                'Disbursed Amount': format_inr(sanc * 0.30),
-                'Date': comp_dt if work_row['WORK_STATUS'] == 'Completed' else 'Pending Completion',
-                'Status': 'Released' if work_row['WORK_STATUS'] == 'Completed' else 'Held Pending Completion'
-            }
+            {'Tranche': 'Tranche 1 (Commencement)', 'Benchmark': 'Administrative Sanction', 'Share': '20%', 'Amount': format_inr(sanc * 0.20), 'Date': sanc_dt, 'Status': 'Released'},
+            {'Tranche': 'Tranche 2 (Interim)', 'Benchmark': '50% Physical Completion', 'Share': '50%', 'Amount': format_inr(sanc * 0.50), 'Date': 'Disbursed' if prog >= 50 else 'Pending', 'Status': 'Released' if prog >= 50 else 'Held Pending Progress'},
+            {'Tranche': 'Tranche 3 (Final Release)', 'Benchmark': 'Final Inspection', 'Share': '30%', 'Amount': format_inr(sanc * 0.30), 'Date': comp_dt if work_row['WORK_STATUS'] == 'Completed' else 'Pending', 'Status': 'Released' if work_row['WORK_STATUS'] == 'Completed' else 'Held Pending Completion'}
         ]
         st.dataframe(pd.DataFrame(tranches), use_container_width=True)
     else:
         render_empty_state("No Selection Available", "No work records available under current filter criteria.")
 
 # ==========================================
-# TAB 4: HUMAN-IN-THE-LOOP OFFICER REVIEW
+# TAB 5: HUMAN-IN-THE-LOOP OFFICER REVIEW
 # ==========================================
 with tab_officer_rev:
     st.markdown("### Officer Verification Portal")
@@ -844,9 +1063,10 @@ with tab_officer_rev:
                 st.write(f"**Implementation Status:** {target_row['WORK_STATUS']}")
                 st.write(f"**Data Status:** {exp_diag['data_status_badge']}")
                 
-                st.markdown("##### Identified Risk Indicators:")
+                st.markdown("##### Why is this record risky?")
                 for r_item in exp_diag['reasons']:
-                    st.write(f"&bull; {r_item}")
+                    clean_r = r_item.split('. ', 1)[-1] if '. ' in r_item else r_item
+                    st.markdown(f"<div class='reason-chip'>⚠️ {clean_r}</div>", unsafe_allow_html=True)
                     
                 st.info(f"Recommended Action: {exp_diag['recommended_action']}")
                 
@@ -898,203 +1118,79 @@ with tab_officer_rev:
             st.info("No recorded verification decisions in active selection.")
 
 # ==========================================
-# TAB 5: DATA ARCHITECTURE & TRANSPARENCY
-# ==========================================
-with tab_data_sources:
-    st.markdown("### Data Architecture & Access Governance")
-    render_active_filter_banner()
-    
-    st.markdown("""
-    System architecture transparently delineates **publicly accessible portal data**, **session-gated API endpoints**, and **future integration streams**.
-    """)
-    
-    c_ds1, c_ds2, c_ds3 = st.columns(3)
-    
-    with c_ds1:
-        st.markdown("""
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 18px; height: 100%;">
-            <div style="color: #38bdf8; font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;">A. Public Ingestion Layer</div>
-            <div style="font-size: 0.82rem; color: #cbd5e1;">
-                <strong>Source:</strong> MoSPI MPLADS Portal REST APIs (<code>mplads.mospi.gov.in</code>).
-            </div>
-            <ul style="font-size: 0.8rem; color: #94a3b8; padding-left: 16px; margin-top: 8px;">
-                <li>State & District aggregate totals</li>
-                <li>MP & Constituency allocations</li>
-                <li>Sanctioned amounts & cumulative spend</li>
-                <li>Implementation status classifications</li>
-            </ul>
-            <div class="badge badge-info" style="margin-top: 10px;">Connected in Production Engine</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with c_ds2:
-        st.markdown("""
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 18px; height: 100%;">
-            <div style="color: #f59e0b; font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;">B. Authenticated Government API</div>
-            <div style="font-size: 0.82rem; color: #cbd5e1;">
-                <strong>Restricted Endpoints:</strong> Role-based access control (RBAC).
-            </div>
-            <ul style="font-size: 0.8rem; color: #94a3b8; padding-left: 16px; margin-top: 8px;">
-                <li>Itemized vendor expenditure vouchers</li>
-                <li>Contractor PAN, GST, and banking records</li>
-                <li>Detailed technical sanction approval files</li>
-                <li>Internal officer workflow logs</li>
-            </ul>
-            <div class="badge badge-medium" style="margin-top: 10px;">Requires e-SAKSHI OAuth Credentials</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with c_ds3:
-        st.markdown("""
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 18px; height: 100%;">
-            <div style="color: #a78bfa; font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;">C. Cross-Agency Streams</div>
-            <div style="font-size: 0.82rem; color: #cbd5e1;">
-                <strong>External Data Streams:</strong> GIS & Remote Sensing feeds.
-            </div>
-            <ul style="font-size: 0.8rem; color: #94a3b8; padding-left: 16px; margin-top: 8px;">
-                <li>PMGSY / Jal Jeevan Mission GIS layers</li>
-                <li>Satellite & drone progress imaging</li>
-                <li>Automated CV milestone verification</li>
-            </ul>
-            <div class="badge badge-low" style="margin-top: 10px;">Planned Enterprise Integration</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("---")
-    
-    st.markdown("#### Target Data Pipeline Flowchart")
-    st.graphviz_chart("""
-    digraph {
-        rankdir=LR;
-        background="transparent";
-        node [shape=box, style="filled,rounded", fillcolor="#1e293b", fontcolor="#f8fafc", fontname="Inter", color="#334155", fontsize=10];
-        edge [color="#38bdf8", penwidth=1.5];
-        
-        A [label="MoSPI Public REST Ingestion Engine\n(mplads.mospi.gov.in)"];
-        B [label="Data Cleaning &\nCurrency Normalizer"];
-        C [label="Data Quality Validation\n& Null Audit"];
-        D [label="Rule-Based Policy\nCompliance Engine"];
-        E [label="Isolation Forest\nOutlier Detector"];
-        F [label="Composite Risk Scoring\n(0-100 Score)"];
-        G [label="Explainable AI\nDiagnostic Cards"];
-        H [label="Human Officer\nVerification Portal"];
-        I [label="Persisted Audit Log\n& Action Engine"];
-        
-        A -> B -> C -> D -> E -> F -> G -> H -> I;
-    }
-    """, use_container_width=True)
-
-    st.markdown("---")
-    
-    st.markdown("#### Security & Enterprise Deployment Governance")
-    st.info("""
-    🔒 **Security & Infrastructure Controls**:
-    - **Deployment Profile**: Deployment architecture targets MeitY-empanelled Cloud / NIC Infrastructure utilizing PostgreSQL enterprise relational storage.
-    - **Data Protection**: Enforces HTTPS/TLS data transit encryption, session-gated Role-Based Access Control (RBAC), multi-factor authentication for verifying officers, and immutable transaction audit logging.
-    """)
-
-    st.markdown("---")
-    
-    st.markdown("#### Functional Module Status Matrix")
-    roadmap_df = pd.DataFrame([
-        {"System Feature / Component": "MoSPI Public REST Ingestion Engine", "Status": "Active Engine", "Deployment Scope": "Core Pipeline"},
-        {"System Feature / Component": "Scheme Guideline Compliance Audit", "Status": "Active Engine", "Deployment Scope": "Rule Engine"},
-        {"System Feature / Component": "Isolation Forest Multivariate Outlier Detection", "Status": "Active Engine", "Deployment Scope": "ML Pipeline"},
-        {"System Feature / Component": "Composite Risk Score (0-100) & Tiering", "Status": "Active Engine", "Deployment Scope": "Risk Engine"},
-        {"System Feature / Component": "Explainable Risk Diagnostic Reasons", "Status": "Active Engine", "Deployment Scope": "XAI Engine"},
-        {"System Feature / Component": "Officer Verification & Audit Log Persistence", "Status": "Active Engine", "Deployment Scope": "Governance Portal"},
-        {"System Feature / Component": "TF-IDF Text Similarity Duplicate Matrix", "Status": "Active Engine", "Deployment Scope": "Forensics Engine"},
-        {"System Feature / Component": "Predictive Trajectory Early Warnings", "Status": "Active Engine", "Deployment Scope": "Forecasting Engine"},
-        {"System Feature / Component": "EXIF Geofence Integrity & Photo Variance Verification", "Status": "Active Sandbox", "Deployment Scope": "Spatial Engine"},
-        {"System Feature / Component": "Cross-Agency Double-Funding Verification (PMGSY/JJM)", "Status": "Active Sandbox", "Deployment Scope": "Spatial Engine"},
-        {"System Feature / Component": "NIC Cloud & Enterprise PostgreSQL Storage Layer", "Status": "Target Architecture", "Deployment Scope": "Infrastructure"}
-    ])
-    st.dataframe(roadmap_df, use_container_width=True)
-
-# ==========================================
-# TAB 6: ADVANCED ANALYTICS & POLICY AUDIT
+# TAB 6: DATA ARCHITECTURE & ADVANCED ANALYTICS
 # ==========================================
 with tab_advanced:
-    st.markdown("### Advanced Forensic Analytics & Policy Audit")
+    st.markdown("### Data Architecture & Advanced Forensics")
     render_active_filter_banner()
     
-    sub_t1, sub_t2, sub_t3, sub_t4, sub_t5 = st.tabs([
-        "Cross-Scheme Audit",
-        "Spatial Integrity & S-Curve",
-        "Predictive Warnings",
-        "Duplicate Detection",
-        "Policy Compliance"
+    sub_t1, sub_t2, sub_t3, sub_t4 = st.tabs([
+        "System Data Architecture",
+        "Policy Guideline Compliance",
+        "Predictive Early Warnings",
+        "Progress Velocity & Burn-Rate"
     ])
-    
-    # SUB-TAB 1: CROSS SCHEME
-    with sub_t1:
-        st.markdown("#### Cross-Scheme Double Funding Spatial Audit")
-        st.markdown("""
-        Evaluates spatial proximity (<100m) and asset descriptions against parallel central/state scheme databases (PMGSY, Jal Jeevan Mission) to identify potential multi-source funding.
-        """)
-        
-        if 'IS_CROSS_SCHEME_DUPLICATE' in filtered_df.columns:
-            cs_matches = filtered_df[filtered_df['IS_CROSS_SCHEME_DUPLICATE'] == True]
-        else:
-            cs_matches = filtered_df.iloc[0:0].copy()
-        
-        col_cs1, col_cs2, col_cs3 = st.columns(3)
-        col_cs1.metric("Flagged Proximity Overlaps", f"{len(cs_matches):,}")
-        col_cs2.metric("Total Value at Risk", format_inr(cs_matches['SANCTION_AMOUNT'].sum()) if not cs_matches.empty else "₹0")
-        col_cs3.metric("Avg Proximity Distance", f"{cs_matches['CROSS_SCHEME_DISTANCE_METERS'].mean():.1f} meters" if not cs_matches.empty and 'CROSS_SCHEME_DISTANCE_METERS' in cs_matches.columns else "N/A")
-        
-        if not cs_matches.empty:
-            st.warning("Spatial Overlap Flagged: The works listed below match geographic coordinates and asset scope with parallel scheme records.")
-            display_cs = cs_matches[['WORK_ID', 'STATE_NAME', 'DISTRICT_NAME', 'WORK_CATEGORY', 'SANCTION_AMOUNT', 'CROSS_SCHEME_MATCH_NAME', 'CROSS_SCHEME_DISTANCE_METERS', 'CROSS_SCHEME_MATCH_TITLE', 'RISK_SCORE']].copy()
-            st.dataframe(
-                display_cs.style.format({
-                    'SANCTION_AMOUNT': lambda x: format_inr(x),
-                    'CROSS_SCHEME_DISTANCE_METERS': '{:.1f} m',
-                    'RISK_SCORE': '{:.1f}'
-                }),
-                use_container_width=True
-            )
-        else:
-            st.success("No cross-scheme spatial overlaps detected in active filter selection.")
 
-    # SUB-TAB 2: S-CURVE PROGRESS VELOCITY
-    with sub_t2:
-        st.markdown("#### Progress S-Curve Milestone & Burn-Rate Velocity")
-        st.markdown("""
-        Evaluates physical milestone burn-rate velocity and financial expenditure lead variance across implementation works.
-        """)
-        
-        st.markdown("""
-        <div style="background: #1e293b; border: 1px solid #334155; border-left: 4px solid #38bdf8; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.83rem; color: #cbd5e1;">
-            ℹ️ <strong>Data Architecture Scope:</strong> Public MoSPI REST API endpoints provide official financial, physical progress, and milestone data. Progress photo attachments are restricted to authenticated e-SAKSHI portal credentials and are excluded from public portal streams.
-        </div>
-        """, unsafe_allow_html=True)
-        
-        if 'IS_STAGNANT_SCURVE' in filtered_df.columns:
-            stagnant_df = filtered_df[filtered_df['IS_STAGNANT_SCURVE'] == True]
-        else:
-            stagnant_df = filtered_df.iloc[0:0].copy()
+    # SUB-TAB 1: ARCHITECTURE & FLOW
+    with sub_t1:
+        st.markdown("#### Target Data Pipeline Flowchart")
+        st.graphviz_chart("""
+        digraph {
+            rankdir=LR;
+            background="transparent";
+            node [shape=box, style="filled,rounded", fillcolor="#1e293b", fontcolor="#f8fafc", fontname="Inter", color="#334155", fontsize=10];
+            edge [color="#38bdf8", penwidth=1.5];
             
-        c_sc1, c_sc2, c_sc3 = st.columns(3)
-        c_sc1.metric("Audited Works Scope", f"{len(filtered_df):,}")
-        c_sc2.metric("S-Curve Stagnation Flags", f"{len(stagnant_df):,}")
-        c_sc3.metric("Avg Physical Progress", f"{filtered_df['PROGRESS_PERCENTAGE'].mean():.1f}%" if not filtered_df.empty else "0.0%")
-        
-        if not stagnant_df.empty:
-            st.warning("Milestone Velocity Lag: Works exhibiting high financial expenditure lead velocity relative to physical completion percentage.")
-            display_sc = stagnant_df[['WORK_ID', 'STATE_NAME', 'DISTRICT_NAME', 'WORK_CATEGORY', 'SANCTION_AMOUNT', 'EXPENDITURE_AMOUNT', 'PROGRESS_PERCENTAGE', 'UTILIZATION_PCT', 'RISK_SCORE']].copy()
+            A [label="MoSPI Public REST Ingestion Engine\n(mplads.mospi.gov.in)"];
+            B [label="Data Cleaning &\nCurrency Normalizer"];
+            C [label="Data Quality Validation\n& Null Audit"];
+            D [label="Rule-Based Policy\nCompliance Engine"];
+            E [label="Isolation Forest\nOutlier Detector"];
+            F [label="Composite Risk Scoring\n(0-100 Score)"];
+            G [label="Explainable AI\nDiagnostic Cards"];
+            H [label="Human Officer\nVerification Portal"];
+            I [label="Persisted Audit Log\n& Action Engine"];
+            
+            A -> B -> C -> D -> E -> F -> G -> H -> I;
+        }
+        """, use_container_width=True)
+
+        st.markdown("---")
+        st.markdown("#### Security & Enterprise Infrastructure Controls")
+        st.info("""
+        🔒 **Enterprise Infrastructure Controls**:
+        - **Deployment Profile**: MeitY-empanelled Cloud / NIC Infrastructure utilizing PostgreSQL enterprise relational storage.
+        - **Data Protection**: Enforces HTTPS/TLS data transit encryption, session-gated Role-Based Access Control (RBAC), multi-factor authentication for verifying officers, and immutable transaction audit logging.
+        """)
+
+    # SUB-TAB 2: POLICY AUDIT
+    with sub_t2:
+        st.markdown("#### Scheme Policy & Guideline Compliance Audit")
+        st.markdown("""
+        Audits work records against official MoSPI MPLADS Guidelines, evaluating MP Tenure Entitlement Ceilings (₹25 Cr for 17th Lok Sabha / ₹10 Cr for 18th Lok Sabha) and administrative sanction completeness.
+        """)
+
+        filtered_work_ids = set(filtered_df['WORK_ID'].unique()) if not filtered_df.empty else set()
+        filtered_comp = compliance_summary_df[compliance_summary_df['Work ID'].isin(filtered_work_ids)] if (compliance_summary_df is not None and not compliance_summary_df.empty) else pd.DataFrame()
+
+        total_violations = len(filtered_comp)
+        ceiling_breaches = len(filtered_comp[filtered_comp['Triggered Policy Rules'].str.contains('Fund Ceiling Breach', na=False)]) if not filtered_comp.empty else 0
+
+        col_c1, col_c2, col_c3 = st.columns(3)
+        col_c1.metric("Audited Works", f"{len(filtered_df):,}")
+        col_c2.metric("Policy Guideline Flags", f"{total_violations:,}")
+        col_c3.metric("Entitlement Ceiling Breaches", f"{ceiling_breaches:,}")
+
+        if not filtered_comp.empty:
+            st.markdown("##### Policy Audit Matrix")
             st.dataframe(
-                display_sc.style.format({
-                    'SANCTION_AMOUNT': lambda x: format_inr(x),
-                    'EXPENDITURE_AMOUNT': lambda x: format_inr(x),
-                    'PROGRESS_PERCENTAGE': '{:.1f}%',
-                    'UTILIZATION_PCT': '{:.1f}%',
-                    'RISK_SCORE': '{:.1f}'
+                filtered_comp[['Work ID', 'State', 'District', 'MP Name', 'Work Category', 'Sanction Amount', 'Violation Severity', 'Triggered Policy Rules']].style.format({
+                    'Sanction Amount': lambda x: format_inr(x)
                 }),
                 use_container_width=True
             )
         else:
-            st.success("Physical milestone progress aligns with financial expenditure burn rates across active selection.")
+            st.success("All works in active selection comply with MoSPI MPLADS policy guidelines and entitlement ceilings.")
 
     # SUB-TAB 3: PREDICTIVE EARLY WARNINGS
     with sub_t3:
@@ -1143,69 +1239,43 @@ with tab_advanced:
         else:
             render_empty_state("No Data", "No ongoing works match criteria for predictive early-warning analysis.")
 
-    # SUB-TAB 4: DUPLICATE WORK MATRIX
+    # SUB-TAB 4: BURN-RATE VELOCITY
     with sub_t4:
-        st.markdown("#### Duplicate Work Verification Matrix")
+        st.markdown("#### Progress Milestone & Expenditure Velocity")
         st.markdown("""
-        Identifies potential redundant or duplicate works using **TF-IDF Vector Space Cosine Similarity** across descriptions, locations, categories, and sanction bounds.
+        Evaluates physical milestone burn-rate velocity and financial expenditure lead variance across implementation works.
         """)
         
-        filtered_work_ids = set(filtered_df['WORK_ID'].unique()) if not filtered_df.empty else set()
-        
-        if duplicates_matrix is not None and not duplicates_matrix.empty and filtered_work_ids:
-            # STRICT FILTER ENFORCEMENT: Both Work A AND Work B must belong to filtered_work_ids
-            filtered_dup = duplicates_matrix[
-                duplicates_matrix['Work A ID'].isin(filtered_work_ids) & 
-                duplicates_matrix['Work B ID'].isin(filtered_work_ids)
-            ].copy()
-            
-            if not filtered_dup.empty:
-                st.warning("High text/spatial similarity pairs requiring verification.")
-                st.dataframe(
-                    filtered_dup.style.format({
-                        'Sanction Amount A': lambda x: format_inr(x),
-                        'Sanction Amount B': lambda x: format_inr(x)
-                    }),
-                    use_container_width=True
-                )
-            else:
-                render_empty_state("No Duplicates", "No duplicate work pairs match active selection criteria.")
+        if 'IS_STAGNANT_SCURVE' in filtered_df.columns:
+            stagnant_df = filtered_df[filtered_df['IS_STAGNANT_SCURVE'] == True]
         else:
-            st.info("No potential duplicate works detected matching current criteria.")
-
-    # SUB-TAB 5: POLICY COMPLIANCE AUDIT
-    with sub_t5:
-        st.markdown("#### Scheme Policy & Guideline Compliance Audit")
-        st.markdown("""
-        Audits work records against official MoSPI MPLADS Guidelines, evaluating MP Tenure Entitlement Ceilings (₹25 Cr for 17th Lok Sabha / ₹10 Cr for 18th Lok Sabha) and administrative sanction completeness.
-        """)
-
-        filtered_work_ids = set(filtered_df['WORK_ID'].unique()) if not filtered_df.empty else set()
-        filtered_comp = compliance_summary_df[compliance_summary_df['Work ID'].isin(filtered_work_ids)] if (compliance_summary_df is not None and not compliance_summary_df.empty) else pd.DataFrame()
-
-        total_violations = len(filtered_comp)
-        ceiling_breaches = len(filtered_comp[filtered_comp['Triggered Policy Rules'].str.contains('Fund Ceiling Breach', na=False)]) if not filtered_comp.empty else 0
-
-        col_c1, col_c2, col_c3 = st.columns(3)
-        col_c1.metric("Audited Works", f"{len(filtered_df):,}")
-        col_c2.metric("Policy Guideline Flags", f"{total_violations:,}")
-        col_c3.metric("Entitlement Ceiling Breaches", f"{ceiling_breaches:,}")
-
-        if not filtered_comp.empty:
-            st.markdown("##### Policy Audit Matrix")
+            stagnant_df = filtered_df.iloc[0:0].copy()
+            
+        c_sc1, c_sc2, c_sc3 = st.columns(3)
+        c_sc1.metric("Audited Works Scope", f"{len(filtered_df):,}")
+        c_sc2.metric("Stagnation Flags", f"{len(stagnant_df):,}")
+        c_sc3.metric("Avg Physical Progress", f"{filtered_df['PROGRESS_PERCENTAGE'].mean():.1f}%" if not filtered_df.empty else "0.0%")
+        
+        if not stagnant_df.empty:
+            st.warning("Milestone Velocity Lag: Works exhibiting high financial expenditure lead velocity relative to physical completion percentage.")
+            display_sc = stagnant_df[['WORK_ID', 'STATE_NAME', 'DISTRICT_NAME', 'WORK_CATEGORY', 'SANCTION_AMOUNT', 'EXPENDITURE_AMOUNT', 'PROGRESS_PERCENTAGE', 'UTILIZATION_PCT', 'RISK_SCORE']].copy()
             st.dataframe(
-                filtered_comp[['Work ID', 'State', 'District', 'MP Name', 'Work Category', 'Sanction Amount', 'Violation Severity', 'Triggered Policy Rules']].style.format({
-                    'Sanction Amount': lambda x: format_inr(x)
+                display_sc.style.format({
+                    'SANCTION_AMOUNT': lambda x: format_inr(x),
+                    'EXPENDITURE_AMOUNT': lambda x: format_inr(x),
+                    'PROGRESS_PERCENTAGE': '{:.1f}%',
+                    'UTILIZATION_PCT': '{:.1f}%',
+                    'RISK_SCORE': '{:.1f}'
                 }),
                 use_container_width=True
             )
         else:
-            st.success("All works in active selection comply with MoSPI MPLADS policy guidelines and entitlement ceilings.")
+            st.success("Physical milestone progress aligns with financial expenditure burn rates across active selection.")
 
 # Footer
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #64748b; font-size: 0.8rem; padding: 12px 0;">
-    MPLADS Expenditure & Risk Monitoring Platform &bull; Ministry of Statistics and Programme Implementation (MoSPI)
+    MPLADS Risk Intelligence & Duplicate Work Detection System &bull; Ministry of Statistics and Programme Implementation (MoSPI)
 </div>
 """, unsafe_allow_html=True)
