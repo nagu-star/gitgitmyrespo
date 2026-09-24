@@ -83,7 +83,7 @@ def generate_work_explanation(row):
         data_status = "Unavailable"
         data_status_badge = "✕ Insufficient Data for Risk Assessment"
 
-    # Numbered Reasons Generation
+    # Numbered Reasons Generation (Plain, Practical Administrative Language for Officers)
     reasons = []
 
     # 1. Cost Overrun / Ratio
@@ -92,48 +92,48 @@ def generate_work_explanation(row):
         if exp_f > sanc_f:
             diff = exp_f - sanc_f
             pct = round((diff / sanc_f) * 100.0, 1)
-            reasons.append(f"Unusual expenditure pattern: Actual expenditure ({exp_str}) exceeds sanctioned budget ({sanc_str}) by {pct}%")
+            reasons.append(f"Budget overrun: Actual expenditure ({exp_str}) exceeds the sanctioned budget ({sanc_str}) by {pct}%")
         elif (exp_f / sanc_f) > 0.85 and pd.notna(prog) and float(prog) < 40.0:
-            reasons.append(f"Progress discrepancy: High financial utilization ({round(exp_f/sanc_f*100,1)}%) despite low reported physical progress ({prog_str})")
+            reasons.append(f"High spending with low physical progress: {round(exp_f/sanc_f*100,1)}% of sanctioned funds have been spent, while physical work is only {prog_str} complete")
 
     # 2. Delay & Progress Velocity
     if status == 'Delayed' or (pd.notna(prog) and float(prog) < 30.0 and status in ['Ongoing', 'Incomplete with High Exp']):
-        reasons.append(f"Significant delay in work completion: Work progress ({prog_str}) lags behind expected schedule milestone")
+        reasons.append(f"Significant execution delay: Physical work completion ({prog_str}) lags far behind the expected completion timeline")
 
-    # 3. Anomaly Detection (Isolation Forest)
+    # 3. Anomaly Detection (Spending pattern deviation)
     if row.get('IS_ANOMALY', False):
-        anom_score = row.get('ANOMALY_SCORE', 0.0)
-        reasons.append(f"Statistical multivariate anomaly detected by Isolation Forest model (Anomaly Index: {anom_score})")
+        reasons.append("Unusual spending pattern: Financial allocation and expenditure timeline differ significantly from standard projects in this category")
 
     # 4. Duplicate Similarity
     if row.get('IS_DUPLICATE_FLAG', False):
-        reasons.append("Duplicate work risk: High textual and financial similarity matched with another work in the same district")
+        reasons.append("Possible duplicate project: Work description, location, and estimated budget closely match another project approved in the same district")
 
     # 5. Geofence / EXIF Mismatch
     if row.get('IS_GEO_MISMATCH', False):
         dist_m = row.get('GEOFENCE_DISTANCE_METERS', 0.0)
-        reasons.append(f"Photo geofence GPS variance: EXIF photo location variance is {dist_m}m from sanctioned coordinates")
+        reasons.append(f"Inspection photo location mismatch: Verification photo coordinates variance is {dist_m}m away from sanctioned project site")
 
     # 6. Cartel / Split Tender
     if row.get('IS_SPLIT_TENDER', False):
-        reasons.append("Split-tendering bypass flag: Sub-₹25L work package cluster awarded under high vendor concentration")
+        reasons.append("Potential tender splitting: Multiple small contracts under ₹25 Lakh were issued in close succession, which may bypass mandatory open competitive bidding rules")
 
     # 7. S-Curve Stagnation
     if row.get('IS_STAGNANT_SCURVE', False):
-        reasons.append("S-Curve progress stagnation: Financial release lead velocity severely outpaces physical execution speed")
+        reasons.append("Funds disbursed but work stalled: Financial releases have advanced significantly while physical ground execution has stalled")
 
     # 8. Cross-Scheme Double Funding
     if row.get('IS_CROSS_SCHEME_DUPLICATE', False):
         cs_name = row.get('CROSS_SCHEME_MATCH_NAME', 'Parallel Scheme')
         dist_m = row.get('CROSS_SCHEME_DISTANCE_METERS', 0.0)
-        reasons.append(f"Cross-scheme double funding: Spatial asset overlap matched with {cs_name} ({dist_m}m proximity)")
+        reasons.append(f"Double-funding alert: A parallel project under {cs_name} is registered at the same site ({dist_m}m away), indicating possible double billing")
 
     # Fallback if no specific flags
     if not reasons:
         if risk_score >= 50.0:
-            reasons.append("Elevated risk parameters based on combined financial allocation and district execution metrics")
+            reasons.append("Elevated risk profile based on combined financial allocation and district execution parameters")
         else:
             reasons.append("Normal execution profile: All financial, physical progress, and compliance bounds are satisfied")
+
 
     # Score Point Breakdown Calculation
     raw_factors = row.get('RISK_FACTORS', '')

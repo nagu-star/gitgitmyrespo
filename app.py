@@ -525,19 +525,19 @@ with tab_overview:
         st.markdown("##### Primary Risk Score Drivers & Flag Reasons")
         if not filtered_df.empty:
             driver_counts = {
-                'Cost Overrun / Ratio': int((filtered_df['EXPENDITURE_AMOUNT'] > filtered_df['SANCTION_AMOUNT']).sum()),
-                'Progress Discrepancy': int(((filtered_df['UTILIZATION_PCT'] > 80.0) & (filtered_df['PROGRESS_PERCENTAGE'] < 50.0)).sum()),
-                'Statistical Anomaly': int(filtered_df['IS_ANOMALY'].sum()) if 'IS_ANOMALY' in filtered_df.columns else 0,
-                'Duplicate Work Risk': int(filtered_df['IS_DUPLICATE_FLAG'].sum()) if 'IS_DUPLICATE_FLAG' in filtered_df.columns else 0,
-                'Cross-Scheme Double Funding': int(filtered_df['IS_CROSS_SCHEME_DUPLICATE'].sum()) if 'IS_CROSS_SCHEME_DUPLICATE' in filtered_df.columns else 0,
-                'Split-Tendering / Cartel': int(filtered_df['IS_SPLIT_TENDER'].sum()) if 'IS_SPLIT_TENDER' in filtered_df.columns else 0,
-                'S-Curve Progress Delay': int(filtered_df['IS_STAGNANT_SCURVE'].sum()) if 'IS_STAGNANT_SCURVE' in filtered_df.columns else 0,
+                'Budget Overrun': int((filtered_df['EXPENDITURE_AMOUNT'] > filtered_df['SANCTION_AMOUNT']).sum()),
+                'High Spending vs Low Progress': int(((filtered_df['UTILIZATION_PCT'] > 80.0) & (filtered_df['PROGRESS_PERCENTAGE'] < 50.0)).sum()),
+                'Unusual Spending Pattern': int(filtered_df['IS_ANOMALY'].sum()) if 'IS_ANOMALY' in filtered_df.columns else 0,
+                'Possible Duplicate Project': int(filtered_df['IS_DUPLICATE_FLAG'].sum()) if 'IS_DUPLICATE_FLAG' in filtered_df.columns else 0,
+                'Double-Funding Alert': int(filtered_df['IS_CROSS_SCHEME_DUPLICATE'].sum()) if 'IS_CROSS_SCHEME_DUPLICATE' in filtered_df.columns else 0,
+                'Potential Tender Splitting': int(filtered_df['IS_SPLIT_TENDER'].sum()) if 'IS_SPLIT_TENDER' in filtered_df.columns else 0,
+                'Funds Disbursed vs Work Stalled': int(filtered_df['IS_STAGNANT_SCURVE'].sum()) if 'IS_STAGNANT_SCURVE' in filtered_df.columns else 0,
             }
             drivers_df = pd.DataFrame(list(driver_counts.items()), columns=['Risk Reason / Indicator', 'Count']).sort_values(by='Count', ascending=True)
             fig_drivers = px.bar(
                 drivers_df, x='Count', y='Risk Reason / Indicator', orientation='h',
                 color='Count', color_continuous_scale='Reds',
-                labels={'Count': 'Number of Flagged Works', 'Risk Reason / Indicator': 'Risk Driver Reason'}
+                labels={'Count': 'Number of Flagged Works', 'Risk Reason / Indicator': 'Administrative Flag Reason'}
             )
             st.plotly_chart(style_plotly_chart(fig_drivers, 320), use_container_width=True)
 
@@ -548,7 +548,7 @@ with tab_risk_mon:
     st.markdown("### Risk Monitoring & Anomaly Matrix")
     render_active_filter_banner()
     st.markdown("""
-    Work items ordered by **Risk Score (Highest First)**. Synthesizes Isolation Forest outlier metrics, utilization-to-progress variance, cost escalation factors, policy compliance, and cross-scheme double funding indicators.
+    Work items ordered by **Risk Score (Highest First)**. Synthesizes budget variances, progress discrepancies, project duplication risks, policy compliance, and cross-scheme double funding indicators into clear administrative explanations.
     """)
     
     if filtered_df.empty:
@@ -588,7 +588,7 @@ with tab_risk_mon:
             'DELAY_INFORMATION': 'Delay Info',
             'RISK_SCORE': 'Risk Score (0-100)',
             'RISK_LEVEL': 'Risk Level',
-            'ALL_RISK_REASONS': 'Risk Reasons & Factor Breakdown',
+            'ALL_RISK_REASONS': 'Administrative Risk Reasons',
             'REVIEW_STATUS': 'Review Status'
         })
 
@@ -605,7 +605,7 @@ with tab_risk_mon:
 
         st.markdown("---")
         st.markdown("#### 🔍 Instant Risk Score & Diagnostic Reason Inspector")
-        st.markdown("Select any work item below to view its exact mathematical point breakdown and itemized reasons for the assigned risk score.")
+        st.markdown("Select any work item below to view its exact mathematical point breakdown and plain administrative reasons for the assigned risk score.")
         
         selected_mon_id = st.selectbox(
             "Select Work ID for Detailed Risk Reason Breakdown",
@@ -630,12 +630,12 @@ with tab_risk_mon:
                 st.write(f"**Data Status:** `{mon_diag['data_status_badge']}`")
                 
             with c_ins2:
-                st.markdown("##### Point Breakdown & Itemized Reasons:")
+                st.markdown("##### Score Point Additions & Administrative Audit Reasons:")
                 st.markdown("**Exact Risk Score Formula Additions:**")
                 for item in mon_diag['score_breakdown']:
                     st.markdown(f"&bull; **{item['factor']}**: `{item['pts']}`")
                 st.markdown("---")
-                st.markdown("**Diagnostic Explanations:**")
+                st.markdown("**Administrative Explanations for Officers:**")
                 for r_idx, reason in enumerate(mon_diag['reasons'], 1):
                     st.markdown(f"**{r_idx}.** {reason}")
                 st.info(f"**Recommended Action:** {mon_diag['recommended_action']}")
@@ -644,7 +644,7 @@ with tab_risk_mon:
 # TAB 3: WORK INSPECTION & AI DIAGNOSTIC
 # ==========================================
 with tab_work_detail:
-    st.markdown("### Itemized Work Inspection & XAI Diagnostic")
+    st.markdown("### Itemized Work Inspection & Administrative Diagnosis")
     render_active_filter_banner()
     
     work_id_options = filtered_df['WORK_ID'].tolist() if not filtered_df.empty else []
@@ -685,7 +685,7 @@ with tab_work_detail:
             st.write(f"**Delay Assessment:** {explanation['delay_info']}")
 
         with col_inf2:
-            st.markdown("#### 2. Risk Evaluation & Diagnostic Reasoning")
+            st.markdown("#### 2. Risk Evaluation & Administrative Diagnosis")
             
             badge_class = "badge-critical" if explanation['risk_level'] == 'CRITICAL' else ("badge-high" if explanation['risk_level'] == 'HIGH' else ("badge-medium" if explanation['risk_level'] == 'MEDIUM' else "badge-low"))
             
@@ -695,7 +695,7 @@ with tab_work_detail:
                     <span style="font-size:1.15rem; font-weight:800; color:#f8fafc;">Composite Risk Score: {explanation['risk_score']}/100</span>
                     <span class="badge {badge_class}">{explanation['risk_level']} RISK</span>
                 </div>
-                <div style="color:#38bdf8; font-size:0.85rem; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Exact Score Calculation & Point Additions:</div>
+                <div style="color:#38bdf8; font-size:0.85rem; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Financial & Administrative Risk Factors (+ Points):</div>
             """, unsafe_allow_html=True)
 
             for b_item in explanation['score_breakdown']:
@@ -703,11 +703,12 @@ with tab_work_detail:
                 
             st.markdown("""
                 <hr style="border-color:#334155; margin: 12px 0 10px 0;">
-                <div style="color:#38bdf8; font-size:0.85rem; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Diagnostic Reasoning Breakdown:</div>
+                <div style="color:#38bdf8; font-size:0.85rem; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Administrative Audit Explanations:</div>
             """, unsafe_allow_html=True)
 
             for reason in explanation['reasons']:
                 st.markdown(f"<div style='color:#e2e8f0; font-size:0.9rem; margin-bottom:6px;'>&bull; {reason}</div>", unsafe_allow_html=True)
+
                 
             st.markdown(f"""
                 <hr style="border-color:#334155; margin: 14px 0 10px 0;">

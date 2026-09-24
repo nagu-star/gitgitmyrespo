@@ -63,13 +63,14 @@ def detect_anomalies(df):
         reasons = []
         if overrun_flag:
             overrun_pct = round(((row['EXPENDITURE_AMOUNT'] - row['SANCTION_AMOUNT']) / max(1, row['SANCTION_AMOUNT'])) * 100, 1)
-            reasons.append(f"Cost Overrun: Expenditure exceeds sanctioned amount by {overrun_pct}%")
+            reasons.append(f"Budget Overrun: Actual expenditure exceeds sanctioned amount by {overrun_pct}%")
         if discrepancy_flag:
-            reasons.append(f"Progress Discrepancy: {row['UTILIZATION_PCT']}% funds spent but work progress is only {row['PROGRESS_PERCENTAGE']}%")
+            reasons.append(f"High Spending with Low Progress: {row['UTILIZATION_PCT']}% of funds spent while physical work is only {row['PROGRESS_PERCENTAGE']}% complete")
         if iqr_flag and not overrun_flag:
-            reasons.append(f"Abnormal Financial Ratio: Cost ratio ({row['COST_RATIO']}x) significantly exceeds normal benchmark bounds")
+            reasons.append(f"Abnormal Cost Ratio: Expenditure ratio ({row['COST_RATIO']}x) exceeds normal category benchmark bounds")
         if iso_flag and len(reasons) == 0:
-            reasons.append("Multivariate Outlier: Isolation Forest detected unusual combination of cost, progress, and expenditure parameters")
+            reasons.append("Unusual Financial Pattern: Financial allocation and expenditure timeline differ significantly from standard projects in this category")
+
 
         is_anomaly_list.append(is_anom)
         anomaly_score_list.append(score)
