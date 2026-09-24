@@ -3,7 +3,7 @@
   "total_states": 36,
   "total_mps": 775,
   "official_data_source": "https://mplads.mospi.gov.in/digigov/dashboard.html",
-  "extraction_timestamp": "2026-09-24 03:13:07",
+  "extraction_timestamp": "2026-09-24 10:45:58",
   "available_fields": [
     "WORK_ID",
     "STATE_ID",

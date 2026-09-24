@@ -122,12 +122,31 @@ def generate_work_explanation(row):
     if row.get('IS_STAGNANT_SCURVE', False):
         reasons.append("S-Curve progress stagnation: Financial release lead velocity severely outpaces physical execution speed")
 
+    # 8. Cross-Scheme Double Funding
+    if row.get('IS_CROSS_SCHEME_DUPLICATE', False):
+        cs_name = row.get('CROSS_SCHEME_MATCH_NAME', 'Parallel Scheme')
+        dist_m = row.get('CROSS_SCHEME_DISTANCE_METERS', 0.0)
+        reasons.append(f"Cross-scheme double funding: Spatial asset overlap matched with {cs_name} ({dist_m}m proximity)")
+
     # Fallback if no specific flags
     if not reasons:
         if risk_score >= 50.0:
             reasons.append("Elevated risk parameters based on combined financial allocation and district execution metrics")
         else:
             reasons.append("Normal execution profile: All financial, physical progress, and compliance bounds are satisfied")
+
+    # Score Point Breakdown Calculation
+    raw_factors = row.get('RISK_FACTORS', '')
+    score_breakdown = [{'factor': 'Base Risk Baseline', 'pts': 15.0, 'description': 'Standard baseline risk allocation for monitored public works'}]
+    
+    if pd.notna(raw_factors) and isinstance(raw_factors, str) and raw_factors != 'Standard implementation profile':
+        factor_items = [f.strip() for f in raw_factors.split(';') if f.strip()]
+        for item in factor_items:
+            score_breakdown.append({
+                'factor': item.split('(')[0].strip() if '(' in item else item.split(':')[0].strip(),
+                'pts': item, # retains exact (+XX.X pts) detail string
+                'description': item
+            })
 
     # Convert to numbered list format
     numbered_reasons = [f"{idx+1}. {r}" for idx, r in enumerate(reasons)]
@@ -158,9 +177,12 @@ def generate_work_explanation(row):
         'risk_score': round(risk_score, 1),
         'risk_level': risk_level,
         'reasons': numbered_reasons,
+        'score_breakdown': score_breakdown,
+        'risk_factors_summary': raw_factors if pd.notna(raw_factors) else '; '.join(reasons),
         'recommended_action': rec_action,
         'data_status': data_status,
         'data_status_badge': data_status_badge,
         'title': f"AI Diagnostic Report — Work ID {w_id} (Risk Score: {round(risk_score, 1)}/100, Level: {risk_level})",
         'responsible_ai_notice': "AI identifies risk indicators; final verification is performed by the authorized officer."
     }
+
